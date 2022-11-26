@@ -11,7 +11,7 @@ const SERVER_URL = "http://127.0.0.1:" + PORT;
 app.get("/", (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
 });
-// app.use("/build", express.static(path.join(__dirname, "../build")));
+// app.use("/build", express.static(path.join(__dirname, "../build"))); 
 
 
 app.listen(3000, () => {
