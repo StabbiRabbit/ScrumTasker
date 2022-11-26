@@ -12,29 +12,30 @@ app.get("/", (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
 });
 
-app.post("/signup", 
+app.post(
+  "/signup",
   (req, res, next) => {
-    console.log('SIGNUP ROUTE');
-    next()
-  },
-  userController.userExists, 
-  (req, res, next) => {
-    console.log('USER EXISTS:', res.locals.userExists);
+    console.log("SIGNUP ROUTE");
     next();
   },
-  userController.createUser, 
+  userController.userExists,
   (req, res, next) => {
-    console.log('CREATED USER');
+    console.log("USER EXISTS:", res.locals.userExists);
     next();
   },
-(req, res) => {
-  if (res.locals.createdUser === true) {
-    res.redirect("/home");
+  userController.createUser,
+  (req, res, next) => {
+    console.log("CREATED USER");
+    next();
+  },
+  (req, res) => {
+    if (res.locals.createdUser === true) {
+      res.redirect("/home");
+    } else {
+      res.redirect("/signup");
+    }
   }
-  else {
-    res.redirect("/signup");
-  }
-});
+);
 
 app.get("/login", (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
@@ -48,14 +49,12 @@ app.get("/home", (req, res) => {
 app.get("/board", (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
 });
-//stretch feature 
+//stretch feature
 // app.get("/teams", (req, res) => {
 //   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
 // });
 
-
-// app.use("/build", express.static(path.join(__dirname, "../build"))); 
-
+// app.use("/build", express.static(path.join(__dirname, "../build")));
 
 app.listen(3000, () => {
   console.log("Listening on port 3000");
