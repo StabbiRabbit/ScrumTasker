@@ -10,7 +10,7 @@ userController.createUser = async (req, res, next) => {
   const { username, password } = req.body;
 
   // Check if the user already exists
-  if (res.locals.userExists === true) {
+  if (res.locals.usernameIsValid === true) {
     const err = {
       log: "userController.userExists",
       message: "Username already exists",
@@ -20,60 +20,84 @@ userController.createUser = async (req, res, next) => {
   }
 
   // Create a new user in users table with username and hashedPass inside the callback
-  bcrypt.hash(password, SALT_WORK_FACTOR, (err, hashedPass) => {
-    if (err) {
-      return next(err);
-    }
-    const queryText = `INSERT INTO users (username, password) VALUES ${username}, ${hashedPass}`;
-    console.log("QUERY:", queryText);
-    db.query(queryText, (err) => {
-      if (err) {
-        return next(err);
-      }
+  bcrypt.hash(password, SALT_WORK_FACTOR)
+  .then( (hashedPass) => {
+    const queryText = 'INSERT INTO users (username, password) VALUES ($1, $2);';
+    const values = [username, hashedPass];
+    db.query(queryText, values)
+    .then(result => {
       res.locals.createdUser = true;
       return next();
-    });
+    })
+    .catch((err) => {
+      next({
+        log: 'Express error handler caught in createUser middleware error',
+        status: 500,
+        message: { err: 'Error creating user' },
+      })
+    })
   });
 };
 
-userController.userExists = (req, res, next) => {
+userController.validateUsername = (req, res, next) => {
   const { username } = req.body;
-  console.log(req.body);
   const queryText = `SELECT * FROM users WHERE username = '${username}'`;
-  console.log("QUERY:", queryText);
-  db.query(queryText, (err, dbResponse) => {
-    if (err) {
-      return next(err);
-    }
-    if (dbResponse.length === 0) {
-      console.log(dbResponse)
-      console.log(res.locals.userExists);
-      res.locals.userExists = false;
-    } else res.locals.userExists = true;
+  db.query(queryText, [])
+  .then( (dbResponse) => {
+    res.locals.usernameIsValid = (dbResponse.rows.length === 0) ? false : true;
     return next();
   });
-};
+}
 
-// userController.validateUser = async (req, res, next) => {
-//   const { username, password } = req.body;
-//   const user = db.query("SELECT * FROM users WHERE");
+userController.validatePassword = (req, res, next) => {
+  const { username, password } = req.body;
+  const queryText = 'SELECT password FROM users WHERE username = $1';
+  const params = [username];
+  db.query(queryText, params)
+  .then( (dbResponse) => {
+    if (dbResponse.rows === 0) {
+      return next({
+        log: 'Error during login',
+        status: 500,
+        message: { err: 'Wrong Password or Username' },
+      })
+    }
+    bcrypt.compare(password, dbResponse.rows[0].password, (err, isMatch) => {
+      if (err) {
+        return next({
+          log: 'Error during login',
+          status: 500,
+          message: { err: 'Wrong Password or Username' },
+        });
+      }
+      res.locals.passwordIsValid = (isMatch) ? true : false;
+      return next();
+    })
+  })
+}
 
-//   if (user[0] === undefined) {
-//     res.locals.signedIn = false;
-//     return next();
-//   }
-
-// //get the password stored in the database and save it ass hasedPass
-// const text = 'SELECT * FROM'
-
-// const comparePass = await bcrypt.compare(password, hasedPass, function(err, isMatch) {
-//     if (err) {
-//         return callback(err);
-//       } else {
-//         callback(null, isMatch);
-//       }
-// })
-
-// };
+userController.getAllBoardsFromUser = async (req, res, next) => {
+  const {username} = req.body;
+  let queryText = 'SELECT _id FROM users WHERE username = $1';
+  let params = [username];
+  let dbResponse = await db.query(queryText, params)
+  const userId = dbResponse.rows[0]._id;
+  // console.log(userId);
+  queryText = 'SELECT board_id FROM board_to_user WHERE board_id = $1';
+  params = [userId];
+  dbResponse= await db.query(queryText, params)
+  const boardIds = dbResponse.rows;
+  // console.log(boardIds);
+  const boards = [];
+  for (const boardId of boardIds) {
+    queryText = 'SELECT title FROM boards WHERE _id = $1'
+    params = [boardId.board_id];
+    dbResponse = await db.query(queryText, params)
+    boards.push(...dbResponse.rows)
+  }
+  res.locals.boards = boards;
+  res.locals.username = username;
+  return next();
+}
 
 module.exports = userController;

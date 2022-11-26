@@ -2,7 +2,7 @@ const { Pool } = require("pg");
 // Pool.defaults.ssl = true;
 // pool.defaults.ssl = true;
 const PG_URI =
-  "postgres://wrmdwzxo:Bn58hLb-vWL3OzezKfySOSjo_VUweY0y@peanut.db.elephantsql.com/wrmdwzxo";
+  "postgres://odgixfex:ltInvOjlEaG_uVNYSqG5-RSsO66VXryF@peanut.db.elephantsql.com/odgixfex";
 
 const pool = new Pool({
   connectionString: PG_URI,

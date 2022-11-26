@@ -19,6 +19,12 @@ CREATE TABLE public.users (
 	"password" varchar NOT NULL
 );
 
+CREATE TABLE public.sessions (
+	"_id" serial NOT NULL,
+	"ssid" string NOT NULL,
+  "user_id" integer NOT NULL
+);
+
 CREATE TABLE public.boards (
 	"_id" serial NOT NULL,
 	"title" varchar NOT NULL
@@ -26,8 +32,8 @@ CREATE TABLE public.boards (
 
 CREATE TABLE  public.board_to_user (
 	"_id" serial NOT NULL,
-  "_boardId" integer NOT NULL,
-  "_userId" integer NOT NULL
+  "board_id" integer NOT NULL,
+  "user_id" integer NOT NULL
 );
 
 CREATE TABLE  public.story (
@@ -38,8 +44,8 @@ CREATE TABLE  public.story (
 
 CREATE TABLE  public.story_to_board (
 	"_id" serial NOT NULL,
-  "_storyId" integer NOT NULL,
-  "_boardId" integer NOT NULL
+  "story_id" integer NOT NULL,
+  "board_id" integer NOT NULL
 );
 
 CREATE TABLE  public.task (
@@ -51,6 +57,7 @@ CREATE TABLE  public.task (
 
 CREATE TABLE  public.task_to_story (
 	"_id" serial NOT NULL,
-  "title" varchar NOT NULL
+  "task_id" integer NOT NULL,
+  "story_id" integer NOT NULL
 );
 

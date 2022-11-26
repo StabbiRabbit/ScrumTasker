@@ -14,25 +14,30 @@ app.get("/", (req, res) => {
 
 app.post(
   "/signup",
-  (req, res, next) => {
-    console.log("SIGNUP ROUTE");
-    next();
-  },
-  userController.userExists,
-  (req, res, next) => {
-    console.log("USER EXISTS:", res.locals.userExists);
-    next();
-  },
+  userController.validateUsername,
   userController.createUser,
-  (req, res, next) => {
-    console.log("CREATED USER");
-    next();
-  },
   (req, res) => {
     if (res.locals.createdUser === true) {
-      res.redirect("/home");
+      res.status(200).send("User Created");
     } else {
-      res.redirect("/signup");
+      res.status(501).send("Error Signing up");
+    }
+  }
+);
+
+app.post(
+  "/login",
+  userController.validateUsername,
+  userController.validatePassword,
+  userController.getAllBoardsFromUser,
+  (req, res) => {
+    if (res.locals.passwordIsValid && res.locals.usernameIsValid) {
+      res.status(200).json({
+        username: res.locals.username,
+        boards: res.locals.boards,
+      });
+    } else {
+      res.status(501).send("Error Logging In, Wrong Username or Password");
     }
   }
 );
@@ -55,6 +60,18 @@ app.get("/board", (req, res) => {
 // });
 
 // app.use("/build", express.static(path.join(__dirname, "../build")));
+
+// Gloabal Error Handler
+app.use((err, req, res, next) => {
+  const defaultErr = {
+    log: "Express error handler caught unknown middleware error",
+    status: 500,
+    message: { err: "An error occurred" },
+  };
+  const errorObj = Object.assign({}, defaultErr, err);
+  console.log(errorObj.log);
+  return res.status(errorObj.status).json(errorObj.message);
+});
 
 app.listen(3000, () => {
   console.log("Listening on port 3000");
