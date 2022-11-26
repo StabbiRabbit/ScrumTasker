@@ -39,8 +39,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      filename: "bundle.html",
-      template: path.join(__dirname, "./template.html"),
+      template: path.join(__dirname, "./index.html"),
     }),
   ],
 };
