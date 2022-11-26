@@ -1,0 +1,48 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+#react-editor-container {
+  max-width: 100%;
+  display: flex;
+  align-self: center;
+  margin: auto;
+  width: calc(100% - 40px);
+  gap: 1.25vw;
+  align-items: top;
+  #editor, #preview {
+    flex: 1;
+    height: fit-content;
+  }
+  div#arrow {
+    font-family: sans-serif;
+    color: #CCC;
+    font-size: 28px;
+    font-weight: 800;
+    flex: 0;
+    align-content: center;
+    margin: auto;
+  }
+}
+
+#editor-text {
+  font-family: "Source Code Pro", monospace;
+}
+
+#preview-text {
+  font-family: Verdana, sans-serif;
+  line-height: 140%;
+}
+
+#editor-text,
+#preview-text {
+  width: 100%;
+  font-size: min(16px, max(14px, 0.75vw));
+  height: auto;
+  border: none;
+  resize: none;
+  overflow: hidden;
+  &:focus,
+  &:active {
+    outline: none;
+    border: none;
+  }
+}
