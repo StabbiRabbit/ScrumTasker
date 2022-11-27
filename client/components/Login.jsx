@@ -22,24 +22,29 @@ function Login() {
       return;
     }
 
-    setUserName("");
-    setPassword("");
-
-    // const userApi = ""
-
-    // fetch(userApi, {
-    //   method: "POST",
-    // })
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     setUserName(data.body.username)
-    //     setPassword(data.body.password)
-    //   })
-    //  .catch(err => console.log(err))
-    console.log('pressin')
-
-    navigate('/dashboard')
-  }
+    console.log("about to fetch")
+    fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: userName,
+        password: password
+      })
+    })
+      .then(response => {
+        console.log(response.status)
+        if (response.status === 200) {
+          navigate("/dashboard");
+        } else if (response.status === 501) { 
+          setUserName("");
+          setPassword("");
+        }
+      })
+      .catch(err =>console.log(err))
+    // navigate('/dashboard')
+    }
 
 
 
