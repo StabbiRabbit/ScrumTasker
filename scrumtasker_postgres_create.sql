@@ -21,11 +21,11 @@ CREATE TABLE public.users (
 
 CREATE TABLE public.sessions (
 	"_id" serial NOT NULL,
-	"ssid" string NOT NULL,
+	"ssid" varchar NOT NULL,
   "user_id" integer NOT NULL
 );
 
-CREATE TABLE public.boards (
+CREATE TABLE public.board (
 	"_id" serial NOT NULL,
 	"title" varchar NOT NULL
 );
@@ -50,7 +50,7 @@ CREATE TABLE  public.story_to_board (
 
 CREATE TABLE  public.task (
 	"_id" serial NOT NULL,
-  "desc" varchar NOT NULL,
+  "description" varchar NOT NULL,
   "status" varchar NOT NULL,
   "priority" integer NOT NULL
 );

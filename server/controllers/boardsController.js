@@ -2,58 +2,50 @@ const db = require("../db.js");
 
 const boardsController = {};
 
-boardsController.getStoryBoardFromUser = async (req, res, next) => {
+boardsController.getBoardFromUser = async (req, res, next) => {
   const { id } = req.params;
   let queryText = "SELECT story_id FROM story_to_board WHERE board_id = $1";
   let params = [id];
   let dbResponse = await db.query(queryText, params);
   const storyId = dbResponse.rows;
-  //   console.log(storyId);
-  [{ story_id: 1 }, { story_id: 5 }];
   const stories = [];
-  //   const template = {
-  //     title: "tasea",
-  //     id: 2,
-  //     stories: [
-  //     {title: "asdas",
-  //     comepeted: true,
-  //     tasks: [
-  //     {desc: "asdas",
-  //     priority: 1,
-  //     status: "done"}
-  //     ]
-  //    }
-  //   ]
-  // }
+
   for (const story of storyId) {
     queryText =
-      "SELECT text, completed, _id AS storyid FROM story WHERE _id = $1";
+      "SELECT text, completed, _id AS story_id FROM story WHERE _id = $1";
     params = [story.story_id];
     dbResponse = await db.query(queryText, params);
-    // console.log(dbResponse.rows[0]);
     stories.push(dbResponse.rows[0]);
   }
-  //   { text: 'creating login page', completed: false, storyid: 1 }
 
   for (const storyItem of stories) {
     storyItem.tasks = [];
     queryText = "SELECT task_id FROM task_to_story WHERE story_id = $1";
-    params = [storyItem.storyid];
+    params = [storyItem.story_id];
     dbResponse = await db.query(queryText, params);
     console.log(dbResponse.rows);
+    let taskIds = dbResponse.rows;
+
+    for (taskItem of taskIds) {
+      queryText =
+        "SELECT description, status, priority, _id AS task_id FROM task WHERE _id = $1";
+      params = [taskItem.task_id];
+      dbResponse = await db.query(queryText, params);
+
+      taskItem.desc = dbResponse.rows[0].description;
+      taskItem.status = dbResponse.rows[0].status;
+      taskItem.priority = dbResponse.rows[0].priority;
+    }
+    storyItem.tasks = dbResponse.rows;
   }
-  //   dbResponse = await db.query(queryText, params);
-  //   const boardIds = dbResponse.rows;
-  //   // console.log(boardIds);
-  //   const boards = [];
-  //   for (const boardId of boardIds) {
-  //     queryText = "SELECT title, _id AS id FROM boards WHERE _id = $1";
-  //     params = [boardId.board_id];
-  //     dbResponse = await db.query(queryText, params);
-  //     boards.push(...dbResponse.rows);
-  //   }
-  //   res.locals.boards = boards;
-  //   res.locals.username = username;
+
+  queryText = "SELECT title FROM board WHERE _id = $1";
+  params = [id];
+  dbResponse = await db.query(queryText, params);
+  let boardTitle = dbResponse.rows[0].title;
+
+  res.locals.boardInfo = { title: boardTitle, board_id: id, stories: stories };
+  console.log(res.locals.boardInfo);
   return next();
 };
 

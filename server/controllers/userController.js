@@ -4,8 +4,6 @@ const bcrypt = require("bcrypt");
 
 const userController = {};
 
-// userController.getAllUsers = (req, res, next) => {};
-
 userController.createUser = async (req, res, next) => {
   const { username, password } = req.body;
   // Check if the user already exists
@@ -78,15 +76,13 @@ userController.getAllBoardsFromUser = async (req, res, next) => {
   let params = [username];
   let dbResponse = await db.query(queryText, params);
   const userId = dbResponse.rows[0]._id;
-  // console.log(userId);
   queryText = "SELECT board_id FROM board_to_user WHERE board_id = $1";
   params = [userId];
   dbResponse = await db.query(queryText, params);
   const boardIds = dbResponse.rows;
-  // console.log(boardIds);
   const boards = [];
   for (const boardId of boardIds) {
-    queryText = "SELECT title, _id AS id FROM boards WHERE _id = $1";
+    queryText = "SELECT title, _id AS id FROM board WHERE _id = $1";
     params = [boardId.board_id];
     dbResponse = await db.query(queryText, params);
     boards.push(...dbResponse.rows);

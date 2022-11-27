@@ -46,8 +46,8 @@ app.post(
   }
 );
 
-app.post("/:id", boardsController.getStoryBoardFromUser, (req, res) => {
-  return res.status(200).json({});
+app.get("/board/:id", boardsController.getBoardFromUser, (req, res) => {
+  return res.status(200).json(res.locals.boardInfo);
 });
 
 app.get("/login", (req, res) => {
