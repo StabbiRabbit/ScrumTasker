@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
 
 app.get("/board", (req, res) => {
   const dummyData = {
-    title: "",
+    title: "dummyExample",
     stories: ["Story1", "Story2"],
   };
   res.status(200).json(dummyData);
