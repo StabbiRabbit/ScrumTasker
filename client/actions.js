@@ -24,7 +24,7 @@ export function updateQueriesActionCreator() {
     branch = document.getElementById("input-branch"),
     filename = document.getElementById("input-filename");
   for (let element of [user, repo, branch, filename]) {
-    element.style.width = element.value.length + 1 +'ch';
+    element.style.width = element.value.length + 1 + "ch";
   }
   const url = `https://raw.githubusercontent.com/${user.value}/${repo.value}/${branch.value}/${filename.value}`;
   console.log(url);
