@@ -33,11 +33,13 @@ function Board() {
 
   useEffect(() => {
     // fetched object data should have board object and username
-    fetch('/api/board')
+    fetch('http://localhost:3000/board', {
+      method: 'GET'
+    })
      .then(response => response.json())
       .then(json => {
-        setBoard(json.board);
-        setUserName(json.userName);
+        console.log(json.title);
+        console.log(json.stories);
       })
   }, [])
 
