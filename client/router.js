@@ -12,10 +12,10 @@ function Router() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="/Dashboard/" element={<Dashboard />} />
+      <Route path="/dashboard/" element={<Dashboard />} />
       <Route path="/board" element={<Board />} />
       <Route path="/signup" element={<Signup />} />
-      {/* <Route path="*" element={<NotFound />} /> */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

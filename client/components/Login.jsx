@@ -25,18 +25,20 @@ function Login() {
     setUserName("");
     setPassword("");
 
-    const userApi = ""
+    // const userApi = ""
 
-    fetch(userApi, {
-      method: "POST",
-    })
-      .then(response => response.json())
-      .then(data => {
-        setUserName(data.body.username)
-        setPassword(data.body.password)
-      })
-     .catch(err => console.log(err))
+    // fetch(userApi, {
+    //   method: "POST",
+    // })
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     setUserName(data.body.username)
+    //     setPassword(data.body.password)
+    //   })
+    //  .catch(err => console.log(err))
     console.log('pressin')
+
+    navigate('/dashboard')
   }
 
 
