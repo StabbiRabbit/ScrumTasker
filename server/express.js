@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const userController = require("./controllers/userController");
+const boardsController = require("./controllers/boardsController");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -18,7 +19,10 @@ app.post(
   userController.createUser,
   (req, res) => {
     if (res.locals.createdUser === true) {
-      res.status(200).send("User Created");
+      res.status(200).json({
+        username: res.locals.username,
+        boards: [],
+      });
     } else {
       res.status(501).send("Error Signing up");
     }
@@ -41,6 +45,10 @@ app.post(
     }
   }
 );
+
+app.post("/:id", boardsController.getStoryBoardFromUser, (req, res) => {
+  return res.status(200).json({});
+});
 
 app.get("/login", (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
