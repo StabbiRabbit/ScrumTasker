@@ -11,8 +11,8 @@ userController.createUser = async (req, res, next) => {
     const err = {
       log: "userController.createUser",
       status: 500,
-      err: {
-        message: "Username already exists",
+      message: {
+        err: "Username already exists",
       }
     };
     res.locals.createdUser = false;
@@ -32,7 +32,7 @@ userController.createUser = async (req, res, next) => {
         next({
           log: "userController.createUser",
           status: 500,
-          err: { message: "Error inserting user to database" },
+          message: { err: "Error inserting user to database" },
         });
       });
   });
@@ -52,7 +52,7 @@ userController.validatePassword = (req, res, next) => {
     return next({
       log: "userController.validatePassword",
       status: 500,
-      err: { message: "Incorrect username or password" },
+      message: { err: "Incorrect username or password" },
     });
 
   const { username, password } = req.body;
@@ -63,7 +63,7 @@ userController.validatePassword = (req, res, next) => {
       return next({
         log: "userController.validatePassword",
         status: 500,
-        err: { message: "Incorrect username or password" },
+        message: { err: "Incorrect username or password" },
       });
     }
     bcrypt.compare(password, dbResponse.rows[0].password, (err, isMatch) => {
@@ -71,7 +71,7 @@ userController.validatePassword = (req, res, next) => {
         return next({
           log: "userController.validatePassword",
           status: 500,
-          err: { message: "Incorrect username or password" },
+          message: { err: "Incorrect username or password" },
         });
       }
       res.locals.passwordIsValid = isMatch ? true : false;
