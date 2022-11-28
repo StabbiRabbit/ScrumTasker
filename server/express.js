@@ -1,13 +1,16 @@
+const path = require("path");
 const express = require("express");
 const app = express();
-const path = require("path");
-const userController = require("./controllers/userController");
-const boardsController = require("./controllers/boardsController");
+const cookieParser = require('cookie-parser');
 const cors = require("cors");
+const boardsController = require("./controllers/boardsController");
+const cookieController = require("./controllers/cookieController");
+const userController = require("./controllers/userController");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(cookieParser());
 
 const PORT = 3000;
 
@@ -33,11 +36,13 @@ app.post(
 
 app.post(
   "/login",
+  cookieController.validateSSID,
   userController.validateUsername,
   userController.validatePassword,
+  cookieController.setSSIDCookie,
   userController.getAllBoardsFromUser,
   (req, res) => {
-    if (res.locals.passwordIsValid && res.locals.usernameIsValid) {
+    if (res.locals.ssidIsValid || (res.locals.passwordIsValid && res.locals.usernameIsValid)) {
       res.status(200).json({
         username: res.locals.username,
         boards: res.locals.boards,
