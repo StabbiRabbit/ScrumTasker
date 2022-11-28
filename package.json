@@ -25,7 +25,7 @@
     "redux": "^4.2.0",
     "redux-devtools-extension": "^2.13.9",
     "showdown": "^2.1.0",
-    "uuidv4": "^6.2.13"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",
