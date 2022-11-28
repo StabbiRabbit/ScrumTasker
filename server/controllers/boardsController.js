@@ -49,4 +49,78 @@ boardsController.getBoardFromUser = async (req, res, next) => {
   return next();
 };
 
+boardsController.createBoard = async (req, res, next) => {
+  try {
+    const { title, user_id } = req.body;
+    let queryText = "INSERT INTO board (title) OUTPUT Inserted.ID VALUES ($1);";
+    let params = [title];
+    let dbResponse = await db.query(queryText, params);
+    console.log(dbResponse);
+    res.locals.board_id = dbResponse;
+
+    queryText =
+      "INSERT INTO board_to_user (board_id, user_id) VALUES ($1, $2);";
+    params = [dbResponse, user_id];
+    dbResponse = await db.query(queryText, params);
+
+    return next();
+  } catch (error) {
+    return next({
+      log: "Error creating a board",
+      status: 500,
+      message: { err: "Could not create the board" },
+    });
+  }
+};
+
+boardsController.createStory = async (req, res, next) => {
+  try {
+    const { text, completed, board_id } = req.body;
+    let queryText =
+      "INSERT INTO story (text, completed) OUTPUT Inserted.ID VALUES ($1, $2);";
+    let params = [text, completed];
+    let dbResponse = await db.query(queryText, params);
+    console.log(dbResponse);
+    res.locals.story_id = dbResponse;
+
+    queryText =
+      "INSERT INTO story_to_board (story_id, board_id) VALUES ($1, $2);";
+    params = [dbResponse, board_id];
+    dbResponse = await db.query(queryText, params);
+
+    return next();
+  } catch (error) {
+    return next({
+      log: "Error creating a story",
+      status: 500,
+      message: { err: "Could not create the story" },
+    });
+  }
+};
+
+boardsController.createTask = async (req, res, next) => {
+  try {
+    const { description, status, priority, story_id } = req.body;
+    let queryText =
+      "INSERT INTO task (description, status, priority) OUTPUT Inserted.ID VALUES ($1, $2, $3);";
+    let params = [description, status, priority];
+    let dbResponse = await db.query(queryText, params);
+    console.log(dbResponse);
+    res.locals.task_id = dbResponse;
+
+    queryText =
+      "INSERT INTO task_to_story (task_id, story_id) VALUES ($1, $2);";
+    params = [dbResponse, story_id];
+    dbResponse = await db.query(queryText, params);
+
+    return next();
+  } catch (error) {
+    return next({
+      log: "Error creating a task",
+      status: 500,
+      message: { err: "Could not create the task" },
+    });
+  }
+};
+
 module.exports = boardsController;

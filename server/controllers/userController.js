@@ -45,6 +45,13 @@ userController.validateUsername = (req, res, next) => {
 };
 
 userController.validatePassword = (req, res, next) => {
+  if (res.locals.usernameIsValid === false)
+    return next({
+      log: "Express error handler caught in validateUsername middleware error",
+      status: 500,
+      message: { err: "Wrong Password or Username" },
+    });
+
   const { username, password } = req.body;
   const queryText = "SELECT password FROM users WHERE username = $1";
   const params = [username];

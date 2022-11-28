@@ -41,7 +41,7 @@ app.post(
         boards: res.locals.boards,
       });
     } else {
-      res.status(501).send("Error Logging In, Wrong Username or Password");
+      res.status(501).send("Wrong Password or Username");
     }
   }
 );
@@ -49,6 +49,22 @@ app.post(
 app.get("/board/:id", boardsController.getBoardFromUser, (req, res) => {
   return res.status(200).json(res.locals.boardInfo);
 });
+
+app.get("/board/create/:id", boardsController.createBoard, (req, res) => {
+  return res.status(200).json(res.locals.board_id);
+});
+
+app.get("/board/story/create/:id", boardsController.createStory, (req, res) => {
+  return res.status(200).json(res.locals.story_id);
+});
+
+app.get(
+  "/board/story/task/create/:id",
+  boardsController.createTask,
+  (req, res) => {
+    return res.status(200).json(res.locals.task_id);
+  }
+);
 
 app.get("/login", (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
