@@ -43,9 +43,7 @@ app.post(
 app.get(
   "/dashboard",
   cookieController.validateSSID,
-
   cookieController.blockInvalidSession,
-
   userController.getAllBoardsFromUser,
   (req, res) => {
     if (res.locals.ssidIsValid) res.status(200).json(res.locals.boardInfo);
@@ -79,7 +77,7 @@ app.post(
 app.get(
   "/board/:id",
   cookieController.validateSSID,
-  // cookieController.blockInvalidSession,
+  cookieController.blockInvalidSession,
   boardsController.getBoardFromUser,
   (req, res) => {
     return res.status(200).json(res.locals.boardInfo);
@@ -91,9 +89,9 @@ app.post(
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.createBoard,
-  boardsController.getBoardFromUserUsingCache,
+  userController.getAllBoardsFromUser,
   (req, res) => {
-    return res.send(200).json(res.locals.boardInfo);
+    return res.status(200).json(res.locals.boardInfo);
   }
 );
 
@@ -104,7 +102,7 @@ app.post(
   boardsController.createStory,
   boardsController.getBoardFromUserUsingCache,
   (req, res) => {
-    return res.send(200).json(res.locals.boardInfo);
+    return res.status(200).json(res.locals.boardInfo);
   }
 );
 
@@ -115,18 +113,18 @@ app.post(
   boardsController.createTask,
   boardsController.getBoardFromUserUsingCache,
   (req, res) => {
-    return res.send(200).json(res.locals.boardInfo);
+    return res.status(200).json(res.locals.boardInfo);
   }
 );
 
-app.post(
+app.delete(
   "/delete/board",
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.deleteBoard,
-  boardsController.getBoardFromUserUsingCache,
+  userController.getAllBoardsFromUser,
   (req, res) => {
-    return res.send(200).json(res.locals.boardInfo);
+    return res.status(200).json(res.locals.boardInfo);
   }
 );
 
@@ -137,7 +135,7 @@ app.post(
   boardsController.createStory,
   boardsController.getBoardFromUserUsingCache,
   (req, res) => {
-    return res.send(200).json(res.locals.boardInfo);
+    return res.status(200).json(res.locals.boardInfo);
   }
 );
 
@@ -148,7 +146,7 @@ app.post(
   boardsController.createTask,
   boardsController.getBoardFromUserUsingCache,
   (req, res) => {
-    return res.send(200).json(res.locals.boardInfo);
+    return res.status(200).json(res.locals.boardInfo);
   }
 );
 
@@ -170,6 +168,21 @@ app.get("/board", (req, res) => {
 // });
 
 // app.use("/build", express.static(path.join(__dirname, "../build")));
+
+// app.use((req, res) =>
+//   res.status(404).send("Sorry! The page you're looking for doesn't exist")
+// );
+
+app.use((err, req, res, next) => {
+  const defaultErr = {
+    log: "Express error handler caught unknown middleware error",
+    status: 500,
+    message: { err: "An error occurred" },
+  };
+  const errorObj = Object.assign({}, defaultErr, err);
+  console.log(`${errorObj.log}: ${errorObj.message.err}`);
+  return res.status(errorObj.status).json(errorObj.message);
+});
 
 app.listen(3000, () => {
   console.log("Listening on port 3000");

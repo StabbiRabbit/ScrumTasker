@@ -14,7 +14,7 @@ const root = createRoot(document.getElementById("root"));
 
 root.render(
   <Provider store={store}>
-    <BrowserRouter>
+    <MemoryRouter>
       <nav className="directions">
         <div className="leftNav">
           <button className="navButton">
@@ -34,11 +34,6 @@ root.render(
               Dashboard
             </Link>
           </button>
-          <button className="navButton">
-            <Link to="board" className="link-text">
-              Board
-            </Link>
-          </button>
         </div>
       </nav>
       {/* <Signup /> */}
@@ -46,6 +41,6 @@ root.render(
       {/* <Dashboard /> */}
       {/* <Board /> */}
       <Router />
-    </BrowserRouter>
+    </MemoryRouter>
   </Provider>
 );

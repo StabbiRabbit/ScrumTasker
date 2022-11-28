@@ -6,137 +6,187 @@ function Board() {
   const { id } = useParams();
 
   const [board, setBoard] = useState([])
-  const [userName, setUserName] = useState("")
-  const [story, setStory] = useState([])
+  const [stories, setStories] = useState([])
   const [toDo, setToDo] = useState([]);
   const [process, setProcess] = useState([]);
-  const [validation, setValidation] = useState([]);
+  const [testing, setTesting ] = useState([]);
   const [done, setdone] = useState([]);
 
   const addStoryBoard = () => {
-    setStory((oldArray) => [...oldArray, { title: 'new title' }])
+    setStories((oldArray) => [...oldArray, { title: 'new title' }])
   }
 
-  const addToDoBoard = () => { 
-    setToDo((oldArray) => [...oldArray, { title: 'new title', description: 'new description'}])
-  }
+  const addToDoBoard = (description, status, priority, story_id) => { 
+    // setToDo((oldArray) => [...oldArray, { title: 'new title', description: 'new description'}])
+
+    fetch('http://localhost:3000/create/task', {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        description,
+        status,
+        priority,
+        story_id: story_id
+      })
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseJson) => {
+      setStories(responseJson.stories);
+      setTodo();
+      for (const story of responseJson.stories) {
+        setTodo([...toDo, story.tasks])
+        // for (const task of story.tasks) {
+        //   task.story_id = story.story_id;
+        //   switch (task.status) {
+        //     case "TO_DO":
+        //       setToDo(task)
+        //       break;
+        //     case "IN_PROCESS":
+        //       setProcess((process) => [...process, task])
+        //       break;
+        //     case "IN_TESTING":
+        //       setTesting((testing) => [...testing, task])
+        //       break;
+        //     case "DONE":
+        //       setDone((done) => [...done, task])
+        //       break;
+        //     default:
+        //       break;
+        //   }
+        // }
+      }
+   })
+}
 
   const addProcessBoard = () => {
     setProcess((oldArray) => [...oldArray, { title: 'new title', description: 'new description' }])
   }
 
   const addValidationBoard = () => { 
-    setValidation((oldArray) => [...oldArray, { title: 'new title' , description: 'new description'}])
+    setTesting((oldArray) => [...oldArray, { title: 'new title' , description: 'new description'}])
   }
 
   const addDoneBoard = () => { 
     setdone((oldArray) => [...oldArray, { title: 'new title', description: 'new description' }])
+
+    
+    
   }
 
-  useEffect(() => {
-    // fetched object data should have board object and username
-    fetch(`http://localhost:3000/board/${id}`, {
+  const fetchAndSort = async () => {
+    let data = await fetch(`http://localhost:3000/board/${id}`, {
       method: 'GET',
       credentials: "include"
     })
-     .then(response => response.json())
-      .then(json => {
-        console.log(json.stories);
-      })
+    data = await data.json();
+    setStories(data.stories);
+    for (const story of data.stories) {
+      for (const task of story.tasks) {
+        task.story_id = story.story_id;
+        switch (task.status) {
+          case "TO_DO":
+            setToDo((toDo) => [...toDo, task])
+            break;
+          case "IN_PROCESS":
+            setProcess((process) => [...process, task])
+            break;
+          case "IN_TESTING":
+            setTesting((testing) => [...testing, task])
+            break;
+          case "DONE":
+            setDone((done) => [...done, task])
+            break;
+          default:
+            break;
+        }
+      }
+    }
+  }
+  
+
+  useEffect(() => {
+    // fetched object data should have board object and username
+    fetchAndSort();
   }, [])
 
+
+  
   return (
     <div>
       {/* should have username on left top */}
-      <header className="board-header">
-        <h1 className="board-title">{`Welcome ${userName}!`}</h1>
-      </header>
+      
 
       {/* should have functionality of creating new boad */}
-    <body className="cards-container">
-      <div className="boards">
-        {/* <div className="example">
-          <h2>story Board Example</h2>
-          <p>will map this board div</p>
-          <button> Delete </button>
-          <button> Edit</button>
-        </div> */}
-          {story.map(board => (
+      <body className="cards-container">
+        <div className="column">
+          <h1 className="board-heading">Stories</h1>
+          {stories.map(story => (
             <div className="cards">
-              <h2>{board.title}</h2>
-              <p>{board.description}</p>
+              <h2>{story.text}</h2>
+              <p>{story.description}</p>
               <button className="card-button">Delete</button>
-              <button className="card-button">Edit</button>
+              <button className="card-button" onClick={() => addToDoBoard("new task Jonathan", "TO_DO", 1, story.story_id)}>Add new</button>
+              
             </div>))}
-        <button onClick={addStoryBoard} className="add-card-button">Add New</button>
+          <button onClick={addStoryBoard} className="add-card-button">Add New</button>
       </div>
 
-      <div className="boards">
-        {/* <div className="example">
-          <h2>to do Board Example</h2>
-          <p>will map this board div</p>
-          <button> Delete </button>
-          <button> Edit</button>
-        </div> */}
+        <div className="column">
+          <h1 className="board-heading">To Do</h1>
         {toDo.map(board => (
             <div className="cards">
               <h2>{board.title}</h2>
               <p>{board.description}</p>
-              <button className="card-button">Delete</button>
-              <button className="card-button">Edit</button>
-            </div>))}
-        <button onClick={addToDoBoard} className="add-card-button">Add New</button>
+              <p>{board.story_id}</p>
+            <button className="card-button">Delete</button>
+            {/* <button className="card-button">&lt;</button> */}
+            <button className="card-button">&gt;</button>
+            </div>
+            ))}
       </div>
 
-      <div className="boards">
-        {/* <div className="example">
-          <h2>in process Board Example</h2>
-          <p>will map this board div</p>
-          <button> Delete </button>
-          <button> Edit</button>
-        </div> */}
+      <div className="column">
+          <h1 className="board-heading">In Process</h1>
           {process.map(board => (
             <div className="cards">
               <h2>{board.title}</h2>
               <p>{board.description}</p>
               <button className="card-button">Delete</button>
-              <button className="card-button">Edit</button>
+              <button className="card-button">&lt;</button>
+              <button className="card-button">&gt;</button>
             </div>))}
-        <button onClick={addProcessBoard} className="add-card-button">Add New</button>
+          <button onClick={addProcessBoard} className="add-card-button">Add New</button>
       </div>
 
-      <div className="boards">
-          {/* <div className="example">
-          <h2>validation Board Example</h2>
-          <p>will map this board div</p>
-          <button> Delete </button>
-          <button> Edit</button>
-        </div> */}
-          {validation.map(board => (
+      <div className="column">
+          <h1 className="board-heading">In Testing</h1>
+          {testing.map(board => (
             <div className="cards">
               <h2>{board.title}</h2>
               <p>{board.description}</p>
               <button className="card-button">Delete</button>
-              <button className="card-button">Edit</button>
+              <button className="card-button">&lt;</button>
+              <button className="card-button">&gt;</button>
             </div>))}
-        <button onClick={addValidationBoard} className="add-card-button">Add New</button>
+          <button onClick={addValidationBoard} className="add-card-button">Add New</button>
       </div>
 
-      <div className="boards">
-        {/* <div className="example">
-          <h2>done Board Example</h2>
-          <p>will map this board div</p>
-          <button> Delete </button>
-          <button> Edit</button>
-        </div> */}
+      <div className="column">
+          <h1 className="board-heading">Done</h1>
           {done.map(board => (
             <div className="cards">
               <h2>{board.title}</h2>
               <p>{board.description}</p>
               <button className="card-button">Delete</button>
-              <button className="card-button">Edit</button>
+              <button className="card-button">&lt;</button>
+              <button className="card-button">Done</button>
             </div>))}
-        <button onClick={addDoneBoard} className="add-card-button">Add New</button>
+          <button onClick={addDoneBoard} className="add-card-button">Add New</button>
         </div>
       </body>
       

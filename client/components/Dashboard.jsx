@@ -6,46 +6,41 @@ function Dashboard() {
   const navigate = useNavigate();
 
 
-  const [userName, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [board, setBoard] = useState([])
 
   const deleteButton = (id) => {
-    setBaord(board.filter((board) => board_id !== id))
-
     // delete a board that has specific id.
-    // fetch('', {
-    //   method: "",
-    //   header: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify({
-    //     title: 'new title',
-    //     id: null
-    //   })
-    // })
+    fetch('http://localhost:3000/delete/board', {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        board_id: id,
+      })
+    })
   }
 
   const createBoard = () => {
-    setBoard((oldArray) => [...oldArray, { title: 'new title' }])
 
-    // posting new board to the user's dashboard
-
-    // fetch('', {
-    //   method: "",
-    //   header: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   body: JSON.stringify({
-    //     title: 'new title',
-    //     id: null
-    //   })
-    // })
-      
-  }
-
-  const openBoard = () => {
-    console.log(board);
-    navigate(`/board/${board[0].id}`)
+    const test = "New Title";
+    
+    fetch('http://localhost:3000/create/board', {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: test,
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        setBoard(data);
+    })
   }
 
   const checkCookie = () => {
@@ -54,27 +49,31 @@ function Dashboard() {
 
     fetch("http://localhost:3000/dashboard", {
       method: "GET",
-      // cookie: { "SOMECOOKIEKEY": "SOMECOOKIEVALUE" },
       credentials:  "include",
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.status === 500) {
+          navigate('/');
+        }
+        return response.json();
+      })
       .then(data => {
-        setUserName(data.username)
+        setUsername(data.username)
         setBoard(data.boards);
       });
   }
 
   useEffect(() => {
     checkCookie();
-    console.log("end of useEffect() in dashboard");
-  }, [])
+  }, [board])
+  
 
-
+  
   return (
     <div>
       <header className="dashboard-header">
-        <h1 className="dashboard-welcome">{`Welcome ${userName}!`}</h1>
-        <button className="dashboard-create-button" onClick={createBoard}>Create +</button>
+        <h1 className="dashboard-welcome">{`Welcome ${username}!`}</h1>
+        <button className="dashboard-create-button" onClick={() => createBoard()}>Create +</button>
       </header>
       <div>
         {board.map((board) => (
@@ -83,9 +82,8 @@ function Dashboard() {
               <h1 className="dashboard-board-title">{board.title}</h1>
             </div>
             <div className="board-element">
-              <button className="board-element-button" onClick={() => deleteButton(board.id)}> Delete </button>
+              <button className="board-element-button" id="dashboarddeletebutton"onClick={() => deleteButton(board.id)}> Delete </button>
               <button className="board-element-button" onClick={() => {
-                console.log(board.id)
                 navigate(`./board/${board.id}`)
               }} id={board.id}> Open</button>
             </div>

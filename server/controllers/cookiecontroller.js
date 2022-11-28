@@ -7,7 +7,7 @@ cookieController.setSSIDCookie = async (req, res, next) => {
   // Generate a random UUID to serve as unique SSID; this will overwrite the client-side SSID cookie if it exists
   const ssidString = uuidv4();
   if (res.locals.passwordIsValid && res.locals.usernameIsValid) {
-    const maxAge = 1000 * 60 * 10; // 10 minutes
+    const maxAge = 1000 * 60 * 30; // 30 minutes
     res.cookie("ssid", ssidString, { maxAge, httpOnly: true });
   }
   // Get the user_id corresponding to req.body.username inside the database
