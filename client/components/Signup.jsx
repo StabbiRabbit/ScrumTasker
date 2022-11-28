@@ -4,6 +4,7 @@ function Signup() {
 
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [signup, setSignup] = useState(false);
 
   
   const onChangeName = (event) => setUserName(event.target.value);
@@ -13,31 +14,49 @@ function Signup() {
     if (userName === "" || password === "") {
       return;
     }
+    setSignup(true)
     setUserName("");
     setPassword("");
   }
   
   return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <input
-          onChange={onChangeName}
-          value={userName}
-          type="text"
-          placeholder="username" />
-        <input
-          onChange={onChangePW}
-          value={password}
-          type="text"
-          placeholder="password" />
-        <button>Login</button>
-      </form>
+    <div className="center">
+      <h1>Sign Up</h1>
 
+      <form onSubmit={onSubmit} >
+
+        {signup ?
+          <h4>You have been Signed up!</h4>
+          : <h4>Hey, Enter your details to get signed up</h4>}
+        <div className="txt_field">
+          
+          <label htmlFor='name' className="form-label">Username
+          </label>
+          <span></span>
+          <input
+            className="form-input"
+            onChange={onChangeName}
+            value={userName}
+            type="text" />
+          
+        </div>
+        <div className="txt_field">
+          <label className="form-label">Password</label>
+          <span></span>
+          <input
+            className="form-input"
+            onChange={onChangePW}
+            value={password}
+            type="password" />
+          </div>
+          <button className="login-button">Sign Up</button> 
+        
+      </form>
+      
 
       {/* directing to the signup page. */}
-      {/* <button>
-        <Link to="/signup" >signup</Link>
-      </button> */}
+      {/* <button onClick={navigate('/signup')}>Sign up</button> */}
+      
 
     </div>
   )
