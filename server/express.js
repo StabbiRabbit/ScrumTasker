@@ -53,8 +53,6 @@ app.get(
   }
 );
 
-
-
 app.get("/login", cookieController.validateSSID, (req, res) => {
   if (res.locals.ssidIsValid) res.status(200).json(res.locals.boardInfo);
   else res.status(501).sendStatus("Invalid SSID");
@@ -81,7 +79,7 @@ app.post(
 app.get(
   "/board/:id",
   cookieController.validateSSID,
-  cookieController.blockInvalidSession,
+  // cookieController.blockInvalidSession,
   boardsController.getBoardFromUser,
   (req, res) => {
     return res.status(200).json(res.locals.boardInfo);
@@ -172,7 +170,6 @@ app.get("/board", (req, res) => {
 // });
 
 // app.use("/build", express.static(path.join(__dirname, "../build")));
-
 
 app.listen(3000, () => {
   console.log("Listening on port 3000");

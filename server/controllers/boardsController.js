@@ -3,11 +3,13 @@ const db = require("../db.js");
 const boardsController = {};
 
 boardsController.getBoardFromUser = async (req, res, next) => {
-  const { board_id } = req.params;
+  const { id } = req.params;
+  console.log(id);
   let queryText = "SELECT story_id FROM story_to_board WHERE board_id = $1";
-  let params = [board_id];
+  let params = [id];
   let dbResponse = await db.query(queryText, params);
   const storyId = dbResponse.rows;
+  console.log(storyId);
   const stories = [];
 
   for (const story of storyId) {
@@ -39,11 +41,11 @@ boardsController.getBoardFromUser = async (req, res, next) => {
   }
 
   queryText = "SELECT title FROM board WHERE _id = $1";
-  params = [board_id];
+  params = [id];
   dbResponse = await db.query(queryText, params);
   let boardTitle = dbResponse.rows[0].title;
 
-  res.locals.boardInfo = { title: boardTitle, board_id: board_id, stories: stories };
+  res.locals.boardInfo = { title: boardTitle, board_id: id, stories: stories };
   return next();
 };
 
