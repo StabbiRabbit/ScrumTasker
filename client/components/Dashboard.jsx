@@ -5,7 +5,7 @@ function Dashboard() {
 
   const [userName, setUserName] = useState("Jason");
   const [board, setBoard] = useState([{ title: 'title1' }, { title: 'title2' }, { title: 'title3' }, { title: 'title4' }])
-  const [editMode, setEditMode] = useState(false)
+  // const [editMode, setEditMode] = useState(false)
 
   const deleteButton = (id) => {
     setBaord(board.filter((board) => board_id !== id))
@@ -45,9 +45,11 @@ function Dashboard() {
     navigate(`/board/:${board_id}`)
   }
 
-  const changeTitle = (e) => { 
-    console.log(e.target.value)
-  }
+  // const changeTitle = (e) => { 
+  //   console.log(e.target.value)
+  // }
+
+
 
   return (
     <div>

@@ -44,12 +44,12 @@ cookieController.validateSSID = async (req, res, next) => {
       // Persist user information through res.locals for later middleware
       res.locals.username = dbResponse.rows[0].username;
       res.locals.user_id = dbResponse.rows[0].user_id;
-      res.locals.ssidIsValid =
-        dbResponse.rows.length === 1 &&
-        (("body" in req &&
-          "username" in req.body &&
-          req.body.username == res.locals.username) ||
-          !"body" in req);
+      res.locals.ssidIsValid = dbResponse.rows.length === 1;
+      // &&
+      // (("body" in req &&
+      //   "username" in req.body &&
+      //   req.body.username == res.locals.username) ||
+      //   !"body" in req);
     }
     res.locals.prevSSID = req.cookies.ssid;
   }

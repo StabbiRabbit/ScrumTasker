@@ -40,10 +40,16 @@ app.post(
   }
 );
 
-app.get("/login", cookieController.validateSSID, (req, res) => {
-  if (res.locals.ssidIsValid) res.sendStatus(200);
-  else res.status(501).sendStatus("Invalid SSID");
-});
+app.get(
+  "/dashboard",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  userController.getAllBoardsFromUser,
+  (req, res) => {
+    if (res.locals.ssidIsValid) res.status(200).json(res.locals.boardInfo);
+    else res.status(501).sendStatus("Invalid SSID");
+  }
+);
 
 // app.post('')
 
@@ -53,7 +59,6 @@ app.post(
   userController.validateUsername,
   userController.validatePassword,
   cookieController.setSSIDCookie,
-  userController.getAllBoardsFromUser,
   (req, res) => {
     if (
       res.locals.ssidIsValid ||
@@ -70,7 +75,7 @@ app.post(
 );
 
 app.get(
-  "/board/:id",
+  "/board",
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.getBoardFromUser,
@@ -79,29 +84,71 @@ app.get(
   }
 );
 
-app.post("/create/board", boardsController.createBoard, (req, res) => {
-  return res.status(200).json(res.locals.board_id);
-});
+app.post(
+  "/create/board",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.createBoard,
+  boardsController.getBoardFromUser,
+  (req, res) => {
+    return res.send(200).json(res.locals.boardInfo);
+  }
+);
 
-app.post("/create/story", boardsController.createStory, (req, res) => {
-  return res.status(200).json(res.locals.story_id);
-});
+app.post(
+  "/create/story",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.createStory,
+  boardsController.getBoardFromUser,
+  (req, res) => {
+    return res.send(200).json(res.locals.boardInfo);
+  }
+);
 
-app.post("/create/task", boardsController.createTask, (req, res) => {
-  return res.status(200).json(res.locals.task_id);
-});
+app.post(
+  "/create/task",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.createTask,
+  boardsController.getBoardFromUser,
+  (req, res) => {
+    return res.send(200).json(res.locals.boardInfo);
+  }
+);
 
-// app.post("/delete/board", boardsController.deleteBoard, (req, res) => {
-//   return res.sendStatus(200);
-// });
+app.post(
+  "/delete/board",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.deleteBoard,
+  boardsController.getBoardFromUser,
+  (req, res) => {
+    return res.send(200).json(res.locals.boardInfo);
+  }
+);
 
-// app.post("/delete/story", boardsController.createStory, (req, res) => {
-//   return res.sendStatus(200);
-// });
+app.post(
+  "/delete/story",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.createStory,
+  boardsController.getBoardFromUser,
+  (req, res) => {
+    return res.send(200).json(res.locals.boardInfo);
+  }
+);
 
-// app.post("/delete/task", boardsController.createTask, (req, res) => {
-//   return res.sendStatus(200);
-// });
+app.post(
+  "/delete/task",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.createTask,
+  boardsController.getBoardFromUser,
+  (req, res) => {
+    return res.send(200).json(res.locals.boardInfo);
+  }
+);
 
 app.get("/login", (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
