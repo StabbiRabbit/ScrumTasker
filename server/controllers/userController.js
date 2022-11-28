@@ -81,13 +81,8 @@ userController.validatePassword = (req, res, next) => {
 };
 
 userController.getAllBoardsFromUser = async (req, res, next) => {
-  const { username } = req.body;
-  let queryText = "SELECT _id FROM users WHERE username = $1";
-  let params = [username];
-  let dbResponse = await db.query(queryText, params);
-  const userId = dbResponse.rows[0]._id;
-  queryText = "SELECT board_id FROM board_to_user WHERE board_id = $1";
-  params = [userId];
+  queryText = "SELECT board_id FROM board_to_user WHERE user_id = $1";
+  params = [res.locals.user_id];
   dbResponse = await db.query(queryText, params);
   const boardIds = dbResponse.rows;
   const boards = [];
@@ -97,8 +92,10 @@ userController.getAllBoardsFromUser = async (req, res, next) => {
     dbResponse = await db.query(queryText, params);
     boards.push(...dbResponse.rows);
   }
-  res.locals.boards = boards;
-  res.locals.username = username;
+  res.locals.boardInfo = {
+    username: res.locals.username,
+    boards: boards,
+  };
   return next();
 };
 
