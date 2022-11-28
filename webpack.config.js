@@ -4,8 +4,12 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   mode: process.env.NODE_ENV,
   devServer: {
-    // proxy: {
-    //   "/": "http://localhost:3000",
+    // proxy: "http://localhost:3000",
+    // headers: {
+    //   "Access-Control-Allow-Origin": "*",
+    //   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+    //   "Access-Control-Allow-Headers":
+    //     "X-Requested-With, content-type, Authorization",
     // },
     static: {
       directory: path.resolve(__dirname, "./build"),
@@ -39,8 +43,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      filename: "bundle.html",
-      template: path.join(__dirname, "./template.html"),
+      template: path.join(__dirname, "./index.html"),
     }),
   ],
 };

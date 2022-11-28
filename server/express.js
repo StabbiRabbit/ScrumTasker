@@ -3,14 +3,16 @@ const app = express();
 const path = require("path");
 const userController = require("./controllers/userController");
 const boardsController = require("./controllers/boardsController");
+const cors = require("cors");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 const PORT = 3000;
 
 app.get("/", (req, res) => {
-  return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
+  return res.status(202).sendFile(path.join(__dirname, "../build/bundle.html"));
 });
 
 app.post(
@@ -81,17 +83,6 @@ app.get("/board", (req, res) => {
 
 // app.use("/build", express.static(path.join(__dirname, "../build")));
 
-// Gloabal Error Handler
-app.use((err, req, res, next) => {
-  const defaultErr = {
-    log: "Express error handler caught unknown middleware error",
-    status: 500,
-    message: { err: "An error occurred" },
-  };
-  const errorObj = Object.assign({}, defaultErr, err);
-  console.log(errorObj.log);
-  return res.status(errorObj.status).json(errorObj.message);
-});
 
 app.listen(3000, () => {
   console.log("Listening on port 3000");
