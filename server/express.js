@@ -1,7 +1,7 @@
 const path = require("path");
 const express = require("express");
 const app = express();
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const boardsController = require("./controllers/boardsController");
 const cookieController = require("./controllers/cookieController");
@@ -9,10 +9,12 @@ const userController = require("./controllers/userController");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-  origin: "http://localhost:8080",
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "http://localhost:8080",
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 
 const PORT = 3000;
@@ -37,7 +39,7 @@ app.post(
   }
 );
 
-app.post(
+app.use(
   "/login",
   cookieController.validateSSID,
   userController.validateUsername,
@@ -45,7 +47,10 @@ app.post(
   cookieController.setSSIDCookie,
   userController.getAllBoardsFromUser,
   (req, res) => {
-    if (res.locals.ssidIsValid || (res.locals.passwordIsValid && res.locals.usernameIsValid)) {
+    if (
+      res.locals.ssidIsValid ||
+      (res.locals.passwordIsValid && res.locals.usernameIsValid)
+    ) {
       res.status(200).json({
         username: res.locals.username,
         boards: res.locals.boards,
@@ -56,9 +61,15 @@ app.post(
   }
 );
 
-app.get("/board/:id", boardsController.getBoardFromUser, (req, res) => {
-  return res.status(200).json(res.locals.boardInfo);
-});
+app.get(
+  "/board/:id",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.getBoardFromUser,
+  (req, res) => {
+    return res.status(200).json(res.locals.boardInfo);
+  }
+);
 
 app.post("/create/board", boardsController.createBoard, (req, res) => {
   return res.status(200).json(res.locals.board_id);
@@ -91,6 +102,16 @@ app.get("/board", (req, res) => {
 
 // app.use("/build", express.static(path.join(__dirname, "../build")));
 
+app.use((err, req, res, next) => {
+  const defaultErr = {
+    log: "Express error handler caught unknown middleware error",
+    status: 500,
+    message: { err: "An error occurred" },
+  };
+  const errorObj = Object.assign({}, defaultErr, err);
+  console.log(`${errorObj.log}: ${errorObj.message.err}`);
+  return res.status(errorObj.status).json(errorObj.message);
+});
 
 app.listen(3000, () => {
   console.log("Listening on port 3000");

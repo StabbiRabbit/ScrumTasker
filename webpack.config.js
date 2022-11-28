@@ -13,6 +13,7 @@ module.exports = {
     },
     port: 8080,
     open: true,
+    historyApiFallback: true,
   },
   entry: path.resolve(__dirname, "./client/main.js"),
   output: {

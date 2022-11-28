@@ -1,9 +1,11 @@
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 const db = require("../db.js");
 
 const cookieController = {};
 
 cookieController.validateSSID = async (req, res, next) => {
+  // Default
+  res.locals.ssidIsValid = false;
   // Check if the client has an SSID cookie
   if (req.cookies.ssid) {
     // Check with database if this SSID corresponds to a single user, only
@@ -11,9 +13,24 @@ cookieController.validateSSID = async (req, res, next) => {
     let params = [req.cookies.ssid];
     const dbResponse = await db.query(queryText, params);
     res.locals.ssidIsValid = dbResponse.rows.length === 1;
+    res.locals.prevSSID = req.cookies.ssid;
   }
   return next();
-}
+};
+
+cookieController.blockInvalidSession = (req, res, next) => {
+  // If session is invalid, respond with error immediately
+  if (res.locals.ssidIsValid === false) {
+    return next({
+      log: "cookieController.validateSSID",
+      status: 500,
+      message: {
+        err: "Invalid Session",
+      },
+    });
+  }
+  return next();
+};
 
 cookieController.setSSIDCookie = async (req, res, next) => {
   // Generate a random UUID to serve as unique SSID; this will overwrite the client-side SSID cookie if it exists
@@ -24,14 +41,20 @@ cookieController.setSSIDCookie = async (req, res, next) => {
   }
   // Get the user_id corresponding to req.body.username inside the database
   const { username } = req.body;
-  let queryText = "SELECT _id FROM users WHERE username = $1"
+  let queryText = "SELECT _id FROM users WHERE username = $1";
   let params = [username];
   let dbResponse = await db.query(queryText, params);
-  // Store the new session inside the database
   const user_id = dbResponse.rows[0]._id;
-  queryText = "INSERT INTO sessions (ssid, user_id) VALUES ($1, $2)"
+  // Store the new session in the database and associate it with the user
+  queryText = "INSERT INTO sessions (ssid, user_id) VALUES ($1, $2)";
   params = [ssidString, user_id];
   await db.query(queryText, params);
+  if (res.locals.prevSSID) {
+    // Delete the old session from the database, if it exists
+    queryText = "DELETE FROM sessions WHERE ssid = $1";
+    params = [res.locals.prevSSID];
+    await db.query(queryText, params);
+  }
   return next();
 };
 

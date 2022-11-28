@@ -21,8 +21,6 @@ function Login() {
     if (userName === "" || password === "") {
       return;
     }
-
-    console.log("about to fetch")
     fetch("http://localhost:3000/login", {
       method: "POST",
       credentials: "include",
@@ -44,7 +42,6 @@ function Login() {
         }
       })
       .catch(err =>console.log(err))
-    // navigate('/dashboard')
     }
 
 
