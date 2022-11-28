@@ -120,4 +120,73 @@ boardsController.createTask = async (req, res, next) => {
   }
 };
 
+// boardsController.deleteBoard = async (req, res, next) => {
+//   try {
+//     const { board_id } = req.body;
+//     let queryText = "DELETE FROM board WHERE _id = $1";
+//     let params = [board_id];
+//     let dbResponse = await db.query(queryText, params);
+
+//     queryText = "DELETE FROM board_to_user WHERE board_id = $1";
+//     params = [board_id];
+//     dbResponse = await db.query(queryText, params);
+
+//     return next();
+//   } catch (error) {
+//     return next({
+//       log: "Error deleting a board",
+//       status: 500,
+//       message: { err: "Could not delete the board" },
+//     });
+//   }
+// };
+
+// boardsController.deleteStory = async (req, res, next) => {
+//   try {
+//     const { story_id } = req.body;
+//     let queryText = "DELETE FROM story WHERE _id = $1";
+//     let params = [story_id];
+//     let dbResponse = await db.query(queryText, params);
+
+//     queryText = "DELETE FROM story_to_board WHERE story_id = $1";
+//     params = [story_id];
+//     dbResponse = await db.query(queryText, params);
+
+//     queryText = "";
+//     params = [story_id];
+//     dbResponse = await db.query(queryText, params);
+
+//     return next();
+//   } catch (error) {
+//     return next({
+//       log: "Error deleting a story",
+//       status: 500,
+//       message: { err: "Could not delete the story" },
+//     });
+//   }
+// };
+
+// boardsController.createTask = async (req, res, next) => {
+//   try {
+//     const { description, status, priority, story_id } = req.body;
+//     let queryText =
+//       "INSERT INTO task (description, status, priority) VALUES ($1, $2, $3) RETURNING _id;";
+//     let params = [description, status, priority];
+//     let dbResponse = await db.query(queryText, params);
+//     res.locals.task_id = dbResponse.rows[0]._id;
+
+//     queryText =
+//       "INSERT INTO task_to_story (task_id, story_id) VALUES ($1, $2);";
+//     params = [dbResponse.rows[0]._id, story_id];
+//     dbResponse = await db.query(queryText, params);
+
+//     return next();
+//   } catch (error) {
+//     return next({
+//       log: "Error creating a task",
+//       status: 500,
+//       message: { err: "Could not create the task" },
+//     });
+//   }
+// };
 module.exports = boardsController;

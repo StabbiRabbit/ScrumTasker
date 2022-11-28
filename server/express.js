@@ -62,6 +62,18 @@ app.post("/create/task", boardsController.createTask, (req, res) => {
   return res.status(200).json(res.locals.task_id);
 });
 
+app.post("/delete/board", boardsController.deleteBoard, (req, res) => {
+  return res.sendStatus(200);
+});
+
+// app.post("/delete/story", boardsController.createStory, (req, res) => {
+//   return res.sendStatus(200);
+// });
+
+// app.post("/delete/task", boardsController.createTask, (req, res) => {
+//   return res.sendStatus(200);
+// });
+
 app.get("/login", (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
 });

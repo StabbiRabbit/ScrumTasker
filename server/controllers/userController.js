@@ -39,7 +39,7 @@ userController.validateUsername = (req, res, next) => {
   const { username } = req.body;
   const queryText = `SELECT * FROM users WHERE username = '${username}'`;
   db.query(queryText, []).then((dbResponse) => {
-    res.locals.usernameIsValid = dbResponse.rows.length === 0 ? false : true;
+    res.locals.usernameIsValid = dbResponse.rows.length > 0;
     return next();
   });
 };
