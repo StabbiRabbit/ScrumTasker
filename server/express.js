@@ -1,21 +1,13 @@
-const path = require("path");
 const express = require("express");
 const app = express();
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
-const boardsController = require("./controllers/boardsController");
-const cookieController = require("./controllers/cookieController");
+const path = require("path");
 const userController = require("./controllers/userController");
+const boardsController = require("./controllers/boardsController");
+const cors = require("cors");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: "http://localhost:8080",
-    credentials: true,
-  })
-);
-app.use(cookieParser());
+app.use(cors());
 
 const PORT = 3000;
 
@@ -27,7 +19,6 @@ app.post(
   "/signup",
   userController.validateUsername,
   userController.createUser,
-  cookieController.setSSIDCookie,
   (req, res) => {
     if (res.locals.createdUser === true) {
       res.status(200).json({
@@ -40,68 +31,26 @@ app.post(
   }
 );
 
-app.get("/login", cookieController.validateSSID, (req, res) => {
-  if (res.locals.ssidIsValid) res.sendStatus(200);
-  else res.status(501).sendStatus("Invalid SSID");
-});
-
-// app.post('')
-
 app.post(
   "/login",
-  cookieController.validateSSID,
   userController.validateUsername,
   userController.validatePassword,
-  cookieController.setSSIDCookie,
   userController.getAllBoardsFromUser,
   (req, res) => {
-    if (
-      res.locals.ssidIsValid ||
-      (res.locals.passwordIsValid && res.locals.usernameIsValid)
-    ) {
+    if (res.locals.passwordIsValid && res.locals.usernameIsValid) {
       res.status(200).json({
         username: res.locals.username,
         boards: res.locals.boards,
       });
     } else {
-      res.status(501).send("Wrong Password or Username");
+      res.status(501).send("Error Logging In, Wrong Username or Password");
     }
   }
 );
 
-app.get(
-  "/board/:id",
-  cookieController.validateSSID,
-  cookieController.blockInvalidSession,
-  boardsController.getBoardFromUser,
-  (req, res) => {
-    return res.status(200).json(res.locals.boardInfo);
-  }
-);
-
-app.post("/create/board", boardsController.createBoard, (req, res) => {
-  return res.status(200).json(res.locals.board_id);
+app.get("/board/:id", boardsController.getBoardFromUser, (req, res) => {
+  return res.status(200).json(res.locals.boardInfo);
 });
-
-app.post("/create/story", boardsController.createStory, (req, res) => {
-  return res.status(200).json(res.locals.story_id);
-});
-
-app.post("/create/task", boardsController.createTask, (req, res) => {
-  return res.status(200).json(res.locals.task_id);
-});
-
-// app.post("/delete/board", boardsController.deleteBoard, (req, res) => {
-//   return res.sendStatus(200);
-// });
-
-// app.post("/delete/story", boardsController.createStory, (req, res) => {
-//   return res.sendStatus(200);
-// });
-
-// app.post("/delete/task", boardsController.createTask, (req, res) => {
-//   return res.sendStatus(200);
-// });
 
 app.get("/login", (req, res) => {
   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
@@ -122,16 +71,6 @@ app.get("/board", (req, res) => {
 
 // app.use("/build", express.static(path.join(__dirname, "../build")));
 
-app.use((err, req, res, next) => {
-  const defaultErr = {
-    log: "Express error handler caught unknown middleware error",
-    status: 500,
-    message: { err: "An error occurred" },
-  };
-  const errorObj = Object.assign({}, defaultErr, err);
-  console.log(`${errorObj.log}: ${errorObj.message.err}`);
-  return res.status(errorObj.status).json(errorObj.message);
-});
 
 app.listen(3000, () => {
   console.log("Listening on port 3000");

@@ -3,9 +3,8 @@ import "../styles/Dashboard.scss"
 
 function Dashboard() {
 
-  const [userName, setUserName] = useState("Jason");
-  const [board, setBoard] = useState([{ title: 'title1' }, { title: 'title2' }, { title: 'title3' }, { title: 'title4' }])
-  const [editMode, setEditMode] = useState(false)
+  const [userName, setUserName] = useState("");
+  const [board, setBoard] = useState([])
 
   const deleteButton = (id) => {
     setBaord(board.filter((board) => board_id !== id))
@@ -45,9 +44,18 @@ function Dashboard() {
     navigate(`/board/:${board_id}`)
   }
 
-  const changeTitle = (e) => { 
-    console.log(e.target.value)
+  const checkCookie = () => {
+    console.log("checking cookie...")
+    fetch("http://localhost:3000/dashboard", {
+      method: "GET"
+    })
+      .then(response => response.json()).then(data => console.log(data));
   }
+
+  useEffect(() => {
+    checkCookie();
+  }, [])
+
 
   return (
     <div>
@@ -57,24 +65,15 @@ function Dashboard() {
       </header>
       <div>
         {board.map((board) => (
-        <div className="dashboard-boards"> 
-          {/* {
-            editMode ? 
-            <form>
-            <input type = 'text' onChange={changeTitle} defaultValue = {board.title}/> 
-            </form>
-                : <div className="board-element">
-                    <h1 onDoubleClick={() => setEditMode(true)}>{board.title}</h1>
-                  </div>
-          } */}
+          <div className="dashboard-boards"> 
             <div className="board-element">
-                    <h1 className="dashboard-board-title">{board.title}</h1>
-                  </div>
+              <h1 className="dashboard-board-title">{board.title}</h1>
+            </div>
             <div className="board-element">
               <button className="board-element-button" onClick={() => deleteButton(board.id)}> Delete </button>
               <button className="board-element-button" onClick={openBoard}> Open</button>
             </div>
-        </div>
+          </div>
         ))}
       </div>
     </div>

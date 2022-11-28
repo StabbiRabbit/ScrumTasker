@@ -36,7 +36,7 @@ function Login() {
         console.log(response.status)
         if (response.status === 200) {
           navigate("/dashboard");
-        } else if (response.status === 501) { 
+        } else if (response.status === 501 || response.status === 500) { 
           setTried(true);
           setUserName("");
           setPassword("");
@@ -49,7 +49,7 @@ function Login() {
   const checkCookie = () => {
     //check if cookie already exists, direct to dashboard
     //if not, return
-    console.log('checkCookie Running')
+    console.log('checking cookie...')
     return;
   }
 

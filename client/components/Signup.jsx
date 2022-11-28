@@ -17,6 +17,14 @@ function Signup() {
     setSignup(true)
     setUserName("");
     setPassword("");
+
+    // fetch("/api/signup", {
+    //   method: "POST",
+    //making ssid with
+    // fetch("/api/signup", {
+    //   method: "POST",
+    // })
+    // .then(response. )
   }
   
   return (
