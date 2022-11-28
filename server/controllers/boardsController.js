@@ -52,15 +52,14 @@ boardsController.getBoardFromUser = async (req, res, next) => {
 boardsController.createBoard = async (req, res, next) => {
   try {
     const { title, user_id } = req.body;
-    let queryText = "INSERT INTO board (title) OUTPUT Inserted.ID VALUES ($1);";
+    let queryText = "INSERT INTO board (title) VALUES ($1) RETURNING _id";
     let params = [title];
     let dbResponse = await db.query(queryText, params);
-    console.log(dbResponse);
-    res.locals.board_id = dbResponse;
+    res.locals.board_id = dbResponse.rows[0]._id;
 
     queryText =
       "INSERT INTO board_to_user (board_id, user_id) VALUES ($1, $2);";
-    params = [dbResponse, user_id];
+    params = [dbResponse.rows[0]._id, user_id];
     dbResponse = await db.query(queryText, params);
 
     return next();
@@ -77,15 +76,14 @@ boardsController.createStory = async (req, res, next) => {
   try {
     const { text, completed, board_id } = req.body;
     let queryText =
-      "INSERT INTO story (text, completed) OUTPUT Inserted.ID VALUES ($1, $2);";
+      "INSERT INTO story (text, completed) VALUES ($1, $2) RETURNING _id;";
     let params = [text, completed];
     let dbResponse = await db.query(queryText, params);
-    console.log(dbResponse);
-    res.locals.story_id = dbResponse;
+    res.locals.story_id = dbResponse.rows[0]._id;
 
     queryText =
       "INSERT INTO story_to_board (story_id, board_id) VALUES ($1, $2);";
-    params = [dbResponse, board_id];
+    params = [dbResponse.rows[0]._id, board_id];
     dbResponse = await db.query(queryText, params);
 
     return next();
@@ -102,15 +100,14 @@ boardsController.createTask = async (req, res, next) => {
   try {
     const { description, status, priority, story_id } = req.body;
     let queryText =
-      "INSERT INTO task (description, status, priority) OUTPUT Inserted.ID VALUES ($1, $2, $3);";
+      "INSERT INTO task (description, status, priority) VALUES ($1, $2, $3) RETURNING _id;";
     let params = [description, status, priority];
     let dbResponse = await db.query(queryText, params);
-    console.log(dbResponse);
-    res.locals.task_id = dbResponse;
+    res.locals.task_id = dbResponse.rows[0]._id;
 
     queryText =
       "INSERT INTO task_to_story (task_id, story_id) VALUES ($1, $2);";
-    params = [dbResponse, story_id];
+    params = [dbResponse.rows[0]._id, story_id];
     dbResponse = await db.query(queryText, params);
 
     return next();
