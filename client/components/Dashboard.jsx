@@ -44,7 +44,8 @@ function Dashboard() {
   }
 
   const openBoard = () => {
-    navigate(`/board/:${board.id}`)
+    console.log(board);
+    navigate(`/board/${board[0].id}`)
   }
 
   const checkCookie = () => {
@@ -83,7 +84,10 @@ function Dashboard() {
             </div>
             <div className="board-element">
               <button className="board-element-button" onClick={() => deleteButton(board.id)}> Delete </button>
-              <button className="board-element-button" onClick={() => openBoard()} id={board.id}> Open</button>
+              <button className="board-element-button" onClick={() => {
+                console.log(board.id)
+                navigate(`./board/${board.id}`)
+              }} id={board.id}> Open</button>
             </div>
           </div>
         ))}
