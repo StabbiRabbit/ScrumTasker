@@ -25,6 +25,7 @@ function Login() {
     console.log("about to fetch")
     fetch("http://localhost:3000/login", {
       method: "POST",
+      credentials: "include",
       headers: {
         'Content-Type': 'application/json'
       },

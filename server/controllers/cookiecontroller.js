@@ -10,9 +10,7 @@ cookieController.validateSSID = async (req, res, next) => {
     let queryText = "SELECT * FROM sessions WHERE ssid = $1";
     let params = [req.cookies.ssid];
     const dbResponse = await db.query(queryText, params);
-    res.locals.ssidIsValid = dbResponse === 1;
-    if (res.locals.ssidIsValid)
-      console.log("SSID IS VALID");
+    res.locals.ssidIsValid = dbResponse.rows.length === 1;
   }
   return next();
 }
