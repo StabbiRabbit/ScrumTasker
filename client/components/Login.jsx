@@ -22,7 +22,6 @@ function Login() {
       return;
     }
 
-    console.log("about to fetch")
     fetch("http://localhost:3000/login", {
       method: "POST",
       headers: {
@@ -49,29 +48,40 @@ function Login() {
 
 
   return (
-    <div>
-      <form onSubmit={onSubmit} className="form">
-        <h5>Login</h5>
-        <div className="form-row">
-          <label htmlFor='name' className="form-label">Username</label>
+    <div className="center">
+      <h1>User Login</h1>
+
+      <form onSubmit={onSubmit} >
+        <h4>Hey, Enter your details to get sign in to your account</h4>
+        <div className="txt_field">
+          
+          <label htmlFor='name' className="form-label">Username
+          </label>
+          <span></span>
           <input
             className="form-input"
             onChange={onChangeName}
             value={userName}
             type="text" />
+          
+        </div>
+        <div className="txt_field">
           <label className="form-label">Password</label>
+          <span></span>
           <input
             className="form-input"
             onChange={onChangePW}
             value={password}
-            type="text" />
-          <button>Login</button>
-        </div>
+            type="password" />
+          </div>
+          <button className="login-button">Sign in</button> 
+        
       </form>
+      
 
       {/* directing to the signup page. */}
       {/* <button onClick={navigate('/signup')}>Sign up</button> */}
-      <button><Link to='/signup'>signup</Link></button>
+      
 
     </div>
   )
