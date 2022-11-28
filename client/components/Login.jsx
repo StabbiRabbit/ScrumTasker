@@ -47,10 +47,15 @@ function Login() {
   }
   
   const checkCookie = () => {
-    //check if cookie already exists, direct to dashboard
-    //if not, return
-    console.log('checking cookie...')
-    return;
+   
+    fetch("http://localhost:3000/login", {
+      method: 'GET',
+      credentials: 'include',
+    }).then((response) => {
+      if (response.status === 200) {
+        navigate('./dashboard')
+      } else { return; }
+    })
   }
 
   useEffect(() => {

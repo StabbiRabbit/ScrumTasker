@@ -46,14 +46,23 @@ function Dashboard() {
 
   const checkCookie = () => {
     console.log("checking cookie...")
+
+
     fetch("http://localhost:3000/dashboard", {
-      method: "GET"
+      method: "GET",
+      // cookie: { "SOMECOOKIEKEY": "SOMECOOKIEVALUE" },
+      credentials:  "include",
     })
-      .then(response => response.json()).then(data => console.log(data));
+      .then(response => response.json())
+      .then(data => {
+        setUserName(data.username)
+        setBoard(data.boards);
+      });
   }
 
   useEffect(() => {
     checkCookie();
+    console.log("end of useEffect() in dashboard");
   }, [])
 
 

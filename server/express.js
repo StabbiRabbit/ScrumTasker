@@ -3,11 +3,20 @@ const app = express();
 const path = require("path");
 const userController = require("./controllers/userController");
 const boardsController = require("./controllers/boardsController");
+const cookieController = require("./controllers/cookieController");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:8080",
+    credentials: true,
+  })
+);
+
+app.use(cookieParser());
 
 const PORT = 3000;
 
@@ -34,7 +43,9 @@ app.post(
 app.get(
   "/dashboard",
   cookieController.validateSSID,
+
   cookieController.blockInvalidSession,
+
   userController.getAllBoardsFromUser,
   (req, res) => {
     if (res.locals.ssidIsValid) res.status(200).json(res.locals.boardInfo);
@@ -42,6 +53,12 @@ app.get(
   }
 );
 
+
+
+app.get("/login", cookieController.validateSSID, (req, res) => {
+  if (res.locals.ssidIsValid) res.status(200).json(res.locals.boardInfo);
+  else res.status(501).sendStatus("Invalid SSID");
+});
 // app.post('')
 
 app.post(
