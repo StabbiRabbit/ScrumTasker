@@ -23,7 +23,6 @@ boardsController.getBoardFromUser = async (req, res, next) => {
     queryText = "SELECT task_id FROM task_to_story WHERE story_id = $1";
     params = [storyItem.story_id];
     dbResponse = await db.query(queryText, params);
-    console.log(dbResponse.rows);
     let taskIds = dbResponse.rows;
 
     for (taskItem of taskIds) {
@@ -45,7 +44,6 @@ boardsController.getBoardFromUser = async (req, res, next) => {
   let boardTitle = dbResponse.rows[0].title;
 
   res.locals.boardInfo = { title: boardTitle, board_id: id, stories: stories };
-  console.log(res.locals.boardInfo);
   return next();
 };
 

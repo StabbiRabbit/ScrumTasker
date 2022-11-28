@@ -1,41 +1,67 @@
-const User = require("../models/userModel");
-const { uuid } = require("uuidv4");
+const { v4: uuidv4 } = require("uuid");
+const db = require("../db.js");
 
 const cookieController = {};
 
-/**
- * setCookie - set a cookie with a random number
- */
-cookieController.setCookie = (req, res, next) => {
-  // write code here
-
-  // invoke res.cookie method, args: 'codesmith', 'hi'
-  res.cookie("codesmith", "hi");
-  // invoke res.cookie again, args: 'secret', string result of random num between 1 and 99
-  const randomNumString = Math.floor(Math.random() * 100).toString();
-  res.cookie("secret", randomNumString);
-
-  // return invocation of next
+cookieController.setSSIDCookie = async (req, res, next) => {
+  // Generate a random UUID to serve as unique SSID; this will overwrite the client-side SSID cookie if it exists
+  const ssidString = uuidv4();
+  if (res.locals.passwordIsValid && res.locals.usernameIsValid) {
+    const maxAge = 1000 * 60 * 10; // 10 minutes
+    res.cookie("ssid", ssidString, { maxAge, httpOnly: true });
+  }
+  // Get the user_id corresponding to req.body.username inside the database
+  const { username } = req.body;
+  let queryText = "SELECT _id FROM users WHERE username = $1";
+  let params = [username];
+  let dbResponse = await db.query(queryText, params);
+  const user_id = dbResponse.rows[0]._id;
+  // Store the new session in the database and associate it with the user
+  queryText = "INSERT INTO sessions (ssid, user_id) VALUES ($1, $2)";
+  params = [ssidString, user_id];
+  await db.query(queryText, params);
+  if (res.locals.prevSSID) {
+    // Delete the old session from the database, if it exists
+    queryText = "DELETE FROM sessions WHERE ssid = $1";
+    params = [res.locals.prevSSID];
+    await db.query(queryText, params);
+  }
   return next();
 };
 
-/**
- * setSSIDCookie - store the user id in a cookie
- */
-cookieController.setSSIDCookie = async (req, res, next) => {
-  // write code here
-  // indicate this method is async in it's declaration
-  // declare constant foundUser and assign it w/ await keyword the eval result of user.findOne passing in args req.body
-  console.log("made it to setSSID cookie");
-  // const foundUser = await User.findOne(req.body);
-  // invoke res.cookie method and pass in args 'ssid', 'foundUser._id
-  // third arg obj -< {key httpOnly and the value is true}
-  res.cookie("ssid", res.locals.newUserDb._id.id, { httpOnly: true });
-  // assign res.locals.ssid to foundUser._id
-  // res.locals.ssid = foundUser._id;
-  console.log("cookie set!");
-  // console.log('res object', res.client.cookies);
-  // return invocation of next
+cookieController.validateSSID = async (req, res, next) => {
+  // Default
+  res.locals.ssidIsValid = false;
+  // Check if the client has an SSID cookie
+  if (req.cookies.ssid) {
+    // Check with database if this SSID corresponds to a single user, only
+    let queryText =
+      "SELECT sessions.ssid, sessions.user_id, users.username FROM sessions JOIN users ON users._id = sessions.user_id WHERE sessions.ssid = $1;";
+    let params = [req.cookies.ssid];
+    const dbResponse = await db.query(queryText, params);
+    console.log("DB", dbResponse.rows);
+    if (dbResponse.rows.length === 1) {
+      // Persist user information through res.locals for later middleware
+      res.locals.username = dbResponse.rows[0].username
+      res.locals.user_id = dbResponse.rows[0].user_id;
+      res.locals.ssidIsValid = dbResponse.rows.length === 1 && (("body" in req && "username" in req.body && req.body.username == res.locals.username) || (! "body" in req));
+    }
+    res.locals.prevSSID = req.cookies.ssid;
+  }
+  return next();
+};
+
+cookieController.blockInvalidSession = (req, res, next) => {
+  // If session is invalid, respond with error immediately
+  if (res.locals.ssidIsValid === false) {
+    return next({
+      log: "cookieController.validateSSID",
+      status: 500,
+      message: {
+        err: "Invalid Session",
+      },
+    });
+  }
   return next();
 };
 

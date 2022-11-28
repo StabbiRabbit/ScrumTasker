@@ -4,14 +4,16 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   mode: process.env.NODE_ENV,
   devServer: {
-    // proxy: {
-    //   "/": "http://localhost:3000",
-    // },
+    hot: true,
+    proxy: {
+      "/": "http://localhost:3000",
+    },
     static: {
       directory: path.resolve(__dirname, "./build"),
     },
     port: 8080,
     open: true,
+    historyApiFallback: true,
   },
   entry: path.resolve(__dirname, "./client/main.js"),
   output: {
@@ -39,8 +41,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      filename: "bundle.html",
-      template: path.join(__dirname, "./template.html"),
+      template: path.join(__dirname, "./index.html"),
     }),
   ],
 };
