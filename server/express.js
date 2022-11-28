@@ -27,6 +27,7 @@ app.post(
   "/signup",
   userController.validateUsername,
   userController.createUser,
+  cookieController.setSSIDCookie,
   (req, res) => {
     if (res.locals.createdUser === true) {
       res.status(200).json({
@@ -39,7 +40,14 @@ app.post(
   }
 );
 
-app.use(
+app.get("/login", cookieController.validateSSID, (req, res) => {
+  if (res.locals.ssidIsValid) res.sendStatus(200);
+  else res.status(501).sendStatus("Invalid SSID");
+});
+
+// app.post('')
+
+app.post(
   "/login",
   cookieController.validateSSID,
   userController.validateUsername,
@@ -83,9 +91,9 @@ app.post("/create/task", boardsController.createTask, (req, res) => {
   return res.status(200).json(res.locals.task_id);
 });
 
-app.post("/delete/board", boardsController.deleteBoard, (req, res) => {
-  return res.sendStatus(200);
-});
+// app.post("/delete/board", boardsController.deleteBoard, (req, res) => {
+//   return res.sendStatus(200);
+// });
 
 // app.post("/delete/story", boardsController.createStory, (req, res) => {
 //   return res.sendStatus(200);

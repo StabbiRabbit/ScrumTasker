@@ -9,11 +9,8 @@ userController.createUser = async (req, res, next) => {
   // Check if the user already exists
   if (res.locals.usernameIsValid === true) {
     const err = {
-      log: "userController.createUser",
-      status: 500,
-      message: {
-        err: "Username already exists",
-      },
+      log: "userController.userExists",
+      message: "Username already exists",
     };
     res.locals.createdUser = false;
     return next(err);
@@ -30,9 +27,9 @@ userController.createUser = async (req, res, next) => {
       })
       .catch((err) => {
         next({
-          log: "userController.createUser",
+          log: "Express error handler caught in createUser middleware error",
           status: 500,
-          message: { err: "Error inserting user to database" },
+          message: { err: "Error creating user" },
         });
       });
   });
@@ -50,9 +47,9 @@ userController.validateUsername = (req, res, next) => {
 userController.validatePassword = (req, res, next) => {
   if (res.locals.usernameIsValid === false)
     return next({
-      log: "userController.validatePassword",
+      log: "Express error handler caught in validateUsername middleware error",
       status: 500,
-      message: { err: "Incorrect username or password" },
+      message: { err: "Wrong Password or Username" },
     });
 
   const { username, password } = req.body;
@@ -61,17 +58,17 @@ userController.validatePassword = (req, res, next) => {
   db.query(queryText, params).then((dbResponse) => {
     if (dbResponse.rows === 0) {
       return next({
-        log: "userController.validatePassword",
+        log: "Error during login",
         status: 500,
-        message: { err: "Incorrect username or password" },
+        message: { err: "Wrong Password or Username" },
       });
     }
     bcrypt.compare(password, dbResponse.rows[0].password, (err, isMatch) => {
       if (err) {
         return next({
-          log: "userController.validatePassword",
+          log: "Error during login",
           status: 500,
-          message: { err: "Incorrect username or password" },
+          message: { err: "Wrong Password or Username" },
         });
       }
       res.locals.passwordIsValid = isMatch ? true : false;
