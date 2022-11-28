@@ -4,6 +4,7 @@ function Signup() {
 
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [signup, setSignup] = useState(false);
 
   
   const onChangeName = (event) => setUserName(event.target.value);
@@ -13,6 +14,7 @@ function Signup() {
     if (userName === "" || password === "") {
       return;
     }
+    setSignup(true)
     setUserName("");
     setPassword("");
   }
@@ -22,7 +24,10 @@ function Signup() {
       <h1>Sign Up</h1>
 
       <form onSubmit={onSubmit} >
-        <h4>Hey, Enter your details to get signed up</h4>
+
+        {signup ?
+          <h4>You have been Signed up!</h4>
+          : <h4>Hey, Enter your details to get signed up</h4>}
         <div className="txt_field">
           
           <label htmlFor='name' className="form-label">Username
@@ -42,7 +47,7 @@ function Signup() {
             className="form-input"
             onChange={onChangePW}
             value={password}
-            type="text" />
+            type="password" />
           </div>
           <button className="login-button">Sign Up</button> 
         
