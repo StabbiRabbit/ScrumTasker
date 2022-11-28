@@ -14,7 +14,7 @@ const root = createRoot(document.getElementById("root"));
 
 root.render(
   <Provider store={store}>
-    <MemoryRouter>
+    <BrowserRouter>
       <nav className="directions">
         <div className="leftNav">
           <button className="navButton">
@@ -46,6 +46,6 @@ root.render(
       {/* <Dashboard /> */}
       {/* <Board /> */}
       <Router />
-    </MemoryRouter>
+    </BrowserRouter>
   </Provider>
 );

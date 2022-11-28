@@ -3,9 +3,53 @@ const db = require("../db.js");
 const boardsController = {};
 
 boardsController.getBoardFromUser = async (req, res, next) => {
-  // const { id } = req.params;
+  const { board_id } = req.params;
   let queryText = "SELECT story_id FROM story_to_board WHERE board_id = $1";
-  let params = [res.locals.user_id];
+  let params = [board_id];
+  let dbResponse = await db.query(queryText, params);
+  const storyId = dbResponse.rows;
+  const stories = [];
+
+  for (const story of storyId) {
+    queryText =
+      "SELECT text, completed, _id AS story_id FROM story WHERE _id = $1";
+    params = [story.story_id];
+    dbResponse = await db.query(queryText, params);
+    stories.push(dbResponse.rows[0]);
+  }
+
+  for (const storyItem of stories) {
+    storyItem.tasks = [];
+    queryText = "SELECT task_id FROM task_to_story WHERE story_id = $1";
+    params = [storyItem.story_id];
+    dbResponse = await db.query(queryText, params);
+    let taskIds = dbResponse.rows;
+
+    for (taskItem of taskIds) {
+      queryText =
+        "SELECT description, status, priority, _id AS task_id FROM task WHERE _id = $1";
+      params = [taskItem.task_id];
+      dbResponse = await db.query(queryText, params);
+
+      taskItem.desc = dbResponse.rows[0].description;
+      taskItem.status = dbResponse.rows[0].status;
+      taskItem.priority = dbResponse.rows[0].priority;
+    }
+    storyItem.tasks = dbResponse.rows;
+  }
+
+  queryText = "SELECT title FROM board WHERE _id = $1";
+  params = [board_id];
+  dbResponse = await db.query(queryText, params);
+  let boardTitle = dbResponse.rows[0].title;
+
+  res.locals.boardInfo = { title: boardTitle, board_id: board_id, stories: stories };
+  return next();
+};
+
+boardsController.getBoardFromUserUsingCache = async (req, res, next) => {
+  let queryText = "SELECT story_id FROM story_to_board WHERE board_id = $1";
+  let params = [res.locals.board_id];
   let dbResponse = await db.query(queryText, params);
   const storyId = dbResponse.rows;
   const stories = [];
@@ -78,6 +122,7 @@ boardsController.createStory = async (req, res, next) => {
     let params = [text, completed];
     let dbResponse = await db.query(queryText, params);
     res.locals.story_id = dbResponse.rows[0]._id;
+    res.locals.board_id = board_id;
 
     queryText =
       "INSERT INTO story_to_board (story_id, board_id) VALUES ($1, $2);";
@@ -107,6 +152,12 @@ boardsController.createTask = async (req, res, next) => {
       "INSERT INTO task_to_story (task_id, story_id) VALUES ($1, $2);";
     params = [dbResponse.rows[0]._id, story_id];
     dbResponse = await db.query(queryText, params);
+
+    queryText = "SELECT board_id FROM story_to_board WHERE story_id = $1";
+    params = [story_id];
+    dbResponse = await db.query(queryText, params);
+
+    res.locals.board_id = dbResponse.rows[0].board_id;
 
     return next();
   } catch (error) {
@@ -142,9 +193,15 @@ boardsController.deleteBoard = async (req, res, next) => {
 boardsController.deleteStory = async (req, res, next) => {
   try {
     const { story_id } = req.body;
-    let queryText = "DELETE FROM story WHERE _id = $1";
+
+    let queryText = "SELECT board_id FROM story_to_board WHERE story_id = $1";
     let params = [story_id];
     let dbResponse = await db.query(queryText, params);
+    res.locals.board_id = dbResponse.rows[0].board_id;
+
+    queryText = "DELETE FROM story WHERE _id = $1";
+    params = [story_id];
+    dbResponse = await db.query(queryText, params);
 
     queryText = "DELETE FROM story_to_board WHERE story_id = $1";
     params = [story_id];
@@ -163,10 +220,16 @@ boardsController.deleteStory = async (req, res, next) => {
 boardsController.createTask = async (req, res, next) => {
   try {
     const { description, status, priority, story_id } = req.body;
-    let queryText =
-      "INSERT INTO task (description, status, priority) VALUES ($1, $2, $3) RETURNING _id;";
-    let params = [description, status, priority];
+
+    let queryText = "SELECT board_id FROM story_to_board WHERE story_id = $1";
+    let params = [story_id];
     let dbResponse = await db.query(queryText, params);
+    res.locals.board_id = dbResponse.rows[0].board_id;
+
+    queryText =
+      "INSERT INTO task (description, status, priority) VALUES ($1, $2, $3) RETURNING _id;";
+    params = [description, status, priority];
+    dbResponse = await db.query(queryText, params);
     res.locals.task_id = dbResponse.rows[0]._id;
 
     queryText =

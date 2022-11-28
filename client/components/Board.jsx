@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
+import {useParams} from "react-router-dom"
 import "../styles/Board.scss"
 
 function Board() {
+  const { id } = useParams();
 
   const [board, setBoard] = useState([])
-  const [userName, setUserName] = useState("Karan")
-  const [story, setStory] = useState([{ title: 'signup', description: 'user must be albe to sign up'}, {title: 'createboard', description: 'user must be able to create board'}])
-  const [toDo, setToDo] = useState([{ title: 'put sign up', description: 'karan put up a sign up feature'}, {title: 'create a board', description: 'jason put up a create board feature'}]);
-  const [process, setProcess] = useState([{ title: 'signup', description: 'user must be albe to sign up' }, { title: 'createboard', description: 'user must be able to create board' }]);
-  const [validation, setValidation] = useState([{ title: 'signup', description: 'user must be albe to sign up'}, {title: 'createboard', description: 'user must be able to create board'}]);
-  const [done, setdone] = useState([{ title: 'signup', description: 'user must be albe to sign up'}, {title: 'createboard', description: 'user must be able to create board'}]);
+  const [userName, setUserName] = useState("")
+  const [story, setStory] = useState([])
+  const [toDo, setToDo] = useState([]);
+  const [process, setProcess] = useState([]);
+  const [validation, setValidation] = useState([]);
+  const [done, setdone] = useState([]);
 
   const addStoryBoard = () => {
     setStory((oldArray) => [...oldArray, { title: 'new title' }])
@@ -33,8 +35,9 @@ function Board() {
 
   useEffect(() => {
     // fetched object data should have board object and username
-    fetch('http://localhost:3000/board', {
-      method: 'GET'
+    fetch(`http://localhost:3000/board/${id}`, {
+      method: 'GET',
+      credentials: "include"
     })
      .then(response => response.json())
       .then(json => {

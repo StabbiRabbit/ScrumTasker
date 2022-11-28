@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.scss"
 
 function Dashboard() {
+  const navigate = useNavigate();
+
 
   const [userName, setUserName] = useState("");
   const [board, setBoard] = useState([])
@@ -41,7 +44,7 @@ function Dashboard() {
   }
 
   const openBoard = () => {
-    navigate(`/board/:${board_id}`)
+    navigate(`/board/:${board.id}`)
   }
 
   const checkCookie = () => {
@@ -80,7 +83,7 @@ function Dashboard() {
             </div>
             <div className="board-element">
               <button className="board-element-button" onClick={() => deleteButton(board.id)}> Delete </button>
-              <button className="board-element-button" onClick={openBoard}> Open</button>
+              <button className="board-element-button" onClick={() => openBoard()} id={board.id}> Open</button>
             </div>
           </div>
         ))}

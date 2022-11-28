@@ -79,7 +79,7 @@ app.post(
 );
 
 app.get(
-  "/board",
+  "/board/:id",
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.getBoardFromUser,
@@ -93,7 +93,7 @@ app.post(
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.createBoard,
-  boardsController.getBoardFromUser,
+  boardsController.getBoardFromUserUsingCache,
   (req, res) => {
     return res.send(200).json(res.locals.boardInfo);
   }
@@ -104,7 +104,7 @@ app.post(
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.createStory,
-  boardsController.getBoardFromUser,
+  boardsController.getBoardFromUserUsingCache,
   (req, res) => {
     return res.send(200).json(res.locals.boardInfo);
   }
@@ -115,7 +115,7 @@ app.post(
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.createTask,
-  boardsController.getBoardFromUser,
+  boardsController.getBoardFromUserUsingCache,
   (req, res) => {
     return res.send(200).json(res.locals.boardInfo);
   }
@@ -126,7 +126,7 @@ app.post(
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.deleteBoard,
-  boardsController.getBoardFromUser,
+  boardsController.getBoardFromUserUsingCache,
   (req, res) => {
     return res.send(200).json(res.locals.boardInfo);
   }
@@ -137,7 +137,7 @@ app.post(
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.createStory,
-  boardsController.getBoardFromUser,
+  boardsController.getBoardFromUserUsingCache,
   (req, res) => {
     return res.send(200).json(res.locals.boardInfo);
   }
@@ -148,7 +148,7 @@ app.post(
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.createTask,
-  boardsController.getBoardFromUser,
+  boardsController.getBoardFromUserUsingCache,
   (req, res) => {
     return res.send(200).json(res.locals.boardInfo);
   }
