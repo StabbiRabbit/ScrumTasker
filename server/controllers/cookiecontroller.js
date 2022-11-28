@@ -3,35 +3,6 @@ const db = require("../db.js");
 
 const cookieController = {};
 
-cookieController.validateSSID = async (req, res, next) => {
-  // Default
-  res.locals.ssidIsValid = false;
-  // Check if the client has an SSID cookie
-  if (req.cookies.ssid) {
-    // Check with database if this SSID corresponds to a single user, only
-    let queryText = "SELECT * FROM sessions WHERE ssid = $1";
-    let params = [req.cookies.ssid];
-    const dbResponse = await db.query(queryText, params);
-    res.locals.ssidIsValid = dbResponse.rows.length === 1;
-    res.locals.prevSSID = req.cookies.ssid;
-  }
-  return next();
-};
-
-cookieController.blockInvalidSession = (req, res, next) => {
-  // If session is invalid, respond with error immediately
-  if (res.locals.ssidIsValid === false) {
-    return next({
-      log: "cookieController.validateSSID",
-      status: 500,
-      message: {
-        err: "Invalid Session",
-      },
-    });
-  }
-  return next();
-};
-
 cookieController.setSSIDCookie = async (req, res, next) => {
   // Generate a random UUID to serve as unique SSID; this will overwrite the client-side SSID cookie if it exists
   const ssidString = uuidv4();
@@ -54,6 +25,42 @@ cookieController.setSSIDCookie = async (req, res, next) => {
     queryText = "DELETE FROM sessions WHERE ssid = $1";
     params = [res.locals.prevSSID];
     await db.query(queryText, params);
+  }
+  return next();
+};
+
+cookieController.validateSSID = async (req, res, next) => {
+  // Default
+  res.locals.ssidIsValid = false;
+  // Check if the client has an SSID cookie
+  if (req.cookies.ssid) {
+    // Check with database if this SSID corresponds to a single user, only
+    let queryText =
+      "SELECT sessions.ssid, sessions.user_id, users.username FROM sessions JOIN users ON users._id = sessions.user_id WHERE sessions.ssid = $1;";
+    let params = [req.cookies.ssid];
+    const dbResponse = await db.query(queryText, params);
+    console.log("DB", dbResponse.rows);
+    if (dbResponse.rows.length === 1) {
+      // Persist user information through res.locals for later middleware
+      res.locals.username = dbResponse.rows[0].username
+      res.locals.user_id = dbResponse.rows[0].user_id;
+      res.locals.ssidIsValid = dbResponse.rows.length === 1 && (("body" in req && "username" in req.body && req.body.username == res.locals.username) || (! "body" in req));
+    }
+    res.locals.prevSSID = req.cookies.ssid;
+  }
+  return next();
+};
+
+cookieController.blockInvalidSession = (req, res, next) => {
+  // If session is invalid, respond with error immediately
+  if (res.locals.ssidIsValid === false) {
+    return next({
+      log: "cookieController.validateSSID",
+      status: 500,
+      message: {
+        err: "Invalid Session",
+      },
+    });
   }
   return next();
 };
