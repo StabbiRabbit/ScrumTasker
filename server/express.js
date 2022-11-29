@@ -21,7 +21,7 @@ app.use(cookieParser());
 const PORT = 3000;
 
 app.get("/", (req, res) => {
-  return res.status(202).sendFile(path.join(__dirname, "../build/bundle.html"));
+  return res.status(202).sendFile(path.join(__dirname, "../build/index.html"));
 });
 
 app.post(
@@ -51,7 +51,8 @@ app.get(
   }
 );
 
-app.get("/login", cookieController.validateSSID, (req, res) => {
+app.get("/login", 
+  cookieController.validateSSID, (req, res) => {
   if (res.locals.ssidIsValid) res.status(200).json(res.locals.boardInfo);
   else res.status(501).sendStatus("Invalid SSID");
 });
