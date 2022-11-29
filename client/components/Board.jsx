@@ -10,7 +10,7 @@ function Board() {
   const [toDo, setToDo] = useState([]);
   const [process, setProcess] = useState([]);
   const [testing, setTesting ] = useState([]);
-  const [done, setdone] = useState([]);
+  const [done, setDone] = useState([]);
 
   const addStoryBoard = () => {
     setStories((oldArray) => [...oldArray, { title: 'new title' }])
@@ -130,8 +130,7 @@ function Board() {
               <h2>{story.text}</h2>
               <p>{story.description}</p>
               <button className="card-button">Delete</button>
-              <button className="card-button" onClick={() => addToDoBoard("new task Jonathan", "TO_DO", 1, story.story_id)}>Add new</button>
-              
+              <button className="card-button" onClick={() => addToDoBoard("new task", "TO_DO", 1, story.story_id)}>Add new</button>
             </div>))}
           <button onClick={addStoryBoard} className="add-card-button">Add New</button>
       </div>
@@ -140,9 +139,7 @@ function Board() {
           <h1 className="board-heading">To Do</h1>
         {toDo.map(board => (
             <div className="cards">
-              <h2>{board.title}</h2>
-              <p>{board.description}</p>
-              <p>{board.story_id}</p>
+              <h2>{board.desc}</h2>
             <button className="card-button">Delete</button>
             {/* <button className="card-button">&lt;</button> */}
             <button className="card-button">&gt;</button>
@@ -154,8 +151,7 @@ function Board() {
           <h1 className="board-heading">In Process</h1>
           {process.map(board => (
             <div className="cards">
-              <h2>{board.title}</h2>
-              <p>{board.description}</p>
+              <h2>{board.desc}</h2>
               <button className="card-button">Delete</button>
               <button className="card-button">&lt;</button>
               <button className="card-button">&gt;</button>
@@ -167,8 +163,7 @@ function Board() {
           <h1 className="board-heading">In Testing</h1>
           {testing.map(board => (
             <div className="cards">
-              <h2>{board.title}</h2>
-              <p>{board.description}</p>
+              <h2>{board.desc}</h2>
               <button className="card-button">Delete</button>
               <button className="card-button">&lt;</button>
               <button className="card-button">&gt;</button>
@@ -180,8 +175,7 @@ function Board() {
           <h1 className="board-heading">Done</h1>
           {done.map(board => (
             <div className="cards">
-              <h2>{board.title}</h2>
-              <p>{board.description}</p>
+              <h2>{board.desc}</h2>
               <button className="card-button">Delete</button>
               <button className="card-button">&lt;</button>
               <button className="card-button">Done</button>

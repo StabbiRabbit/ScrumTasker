@@ -151,28 +151,28 @@ boardsController.createStory = async (req, res, next) => {
 
 boardsController.createTask = async (req, res, next) => {
   try {
-    console.log(req.body.story_id);
+    // console.log(req.body.story_id);
     const { description, status, priority, story_id } = req.body;
     let queryText =
       "INSERT INTO task (description, status, priority) VALUES ($1, $2, $3) RETURNING _id;";
     let params = [description, status, priority];
     let dbResponse = await db.query(queryText, params);
-    console.log("i was here");
+    // console.log("i was here");
     res.locals.task_id = dbResponse.rows[0]._id;
 
     queryText =
       "INSERT INTO task_to_story (task_id, story_id) VALUES ($1, $2);";
     params = [dbResponse.rows[0]._id, story_id];
     dbResponse = await db.query(queryText, params);
-    console.log("i was here2");
+    // console.log("i was here2");
 
     queryText = "SELECT board_id FROM story_to_board WHERE story_id = $1";
     params = [story_id];
     dbResponse = await db.query(queryText, params);
-    console.log("i was here3");
+    // console.log("i was here3");
     console.log(dbResponse.rows);
     res.locals.board_id = dbResponse.rows[0].board_id;
-    console.log("i was here4");
+    // console.log("i was here4");
 
     return next();
   } catch (error) {
