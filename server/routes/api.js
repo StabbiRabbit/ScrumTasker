@@ -5,6 +5,23 @@ const userController = require("../controllers/userController");
 
 const router = express.Router();
 
+router.post(
+  "/signup",
+  userController.validateUsername,
+  userController.createUser,
+  cookieController.setSSIDCookie,
+  (req, res) => {
+    if (res.locals.createdUser === true) {
+      res.status(200).json({
+        username: res.locals.username,
+        boards: [],
+      });
+    } else {
+      res.status(501).send("Error Signing up");
+    }
+  }
+);
+
 router.get(
   "/board/:id",
   cookieController.validateSSID,

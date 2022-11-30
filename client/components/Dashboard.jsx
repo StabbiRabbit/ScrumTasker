@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.scss";
 
-const { BACKEND_URL } = process.env;;
+const { BACKEND_URL } = process.env;
 
 function Dashboard() {
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
-  const [boards, setBoards] = useState([]);;
+  const [boards, setBoards] = useState([]);
 
   // On initial page load, check if the session is valid and grab user data
   useEffect(() => {
     validateSessionAndGetUserData();
-  }, []);;
+  }, []);
 
   // Grab user data (name, boards) from database by cookie SSID
   const validateSessionAndGetUserData = () => {    
@@ -33,10 +33,9 @@ function Dashboard() {
         setBoards([...serverResponseJson.boards]);
       });
   }
-  };
 
   const createNewBoard = (title) => {
-    fetch("http://localhost:3000/create/board", {
+    fetch(`${BACKEND_URL}/create/board`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -53,7 +52,7 @@ function Dashboard() {
   };
 
   const deleteBoardById = (board_id) => {
-    fetch("http://localhost:3000/delete/board", {
+    fetch(`${BACKEND_URL}/board`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

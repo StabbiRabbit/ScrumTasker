@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+const { BACKEND_URL } = process.env;
 
 function Signup() {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ function Signup() {
     }
     setUsername("");
     setPassword("");
-    fetch("http://localhost:3000/signup", {
+    fetch(`${BACKEND_URL}/api/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
