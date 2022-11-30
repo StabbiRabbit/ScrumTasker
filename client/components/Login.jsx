@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from "react";
 // react router linking for signup and login
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";;
 import "../styles/Login.scss";
 
-const { BACKEND_URL } = process.env;
+const { BACKEND_URL } = process.env;;
 
 function Login() {
   // state control of username and password
   const navigate = useNavigate();
-
-  const [userName, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [tried, setTried] = useState(false);
 
-  const onChangeName = (event) => setUserName(event.target.value);
+  const onChangeName = (event) => setUsername(event.target.value);
   const onChangePW = (event) => setPassword(event.target.value);
 
   const onSubmit = (event) => {
     event.preventDefault();
-    if (userName === "" || password === "") {
+    if (username === "" || password === "") {
       return;
     }
     fetch(`${BACKEND_URL}/login`, {
@@ -28,25 +27,25 @@ function Login() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: userName,
+        username: username,
         password: password,
       }),
     })
       .then((response) => {
-        console.log(response.status);
+        // console.log(response.status)
         if (response.status === 200) {
           navigate("/dashboard");
-        } else if (response.status === 501 || response.status === 500) {
+        } else if (response.status >= 500 && response.status <= 599) {
+          // If the response is comes back as bad, clear the username and password fields
           setTried(true);
-          setUserName("");
+          setUsername("");
           setPassword("");
         }
       })
       .catch((err) => console.log(err));
-    // navigate('/dashboard')
   };
 
-  const checkCookie = () => {
+  const skipLoginIfValidSession = () => {
     fetch(`${BACKEND_URL}/login`, {
       method: "GET",
       credentials: "include",
@@ -60,7 +59,7 @@ function Login() {
   };
 
   useEffect(() => {
-    checkCookie();
+    skipLoginIfValidSession();
   }, []);
 
   return (
@@ -68,36 +67,36 @@ function Login() {
       <h1>User Login</h1>
       <form onSubmit={onSubmit}>
         {tried ? (
-          <h4 className='wrong-input-message'>
-            Wrong input of username or password! Please sign up or enter correct
-            details
+          <h4 className="wrong-input-message">
+            Incorrect username or password. Please try again or sign up for a
+            new account
           </h4>
         ) : (
-          <h4>Hey, Enter your details to get sign in to your account</h4>
+          <h4>Enter your details below to log in to your account</h4>
         )}
-        <div className='txt_field'>
-          <label htmlFor='name' className='form-label'>
+        <div className="txt_field">
+          <label htmlFor="name" className="form-label">
             Username
           </label>
           <span></span>
           <input
-            className='form-input'
+            className="form-input"
             onChange={onChangeName}
-            value={userName}
-            type='text'
+            value={username}
+            type="text"
           />
         </div>
-        <div className='txt_field'>
-          <label className='form-label'>Password</label>
+        <div className="txt_field">
+          <label className="form-label">Password</label>
           <span></span>
           <input
-            className='form-input'
+            className="form-input"
             onChange={onChangePW}
             value={password}
-            type='password'
+            type="password"
           />
         </div>
-        <button className='login-button'>Sign in</button>
+        <button className="login-button">Sign in</button>
       </form>
     </div>
   );

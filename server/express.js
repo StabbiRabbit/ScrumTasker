@@ -31,6 +31,7 @@ app.post(
   "/signup",
   userController.validateUsername,
   userController.createUser,
+  cookieController.setSSIDCookie,
   (req, res) => {
     if (res.locals.createdUser === true) {
       res.status(200).json({

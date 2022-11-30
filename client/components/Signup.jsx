@@ -1,73 +1,81 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
-
-  const [userName, setUserName] = useState("");
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [signup, setSignup] = useState(false);
 
-  
-  const onChangeName = (event) => setUserName(event.target.value);
-  const onChangePW = (event) => setPassword(event.target.value);
-  const onSubmit = (event) => {
+  const onChangeUsername = (event) => setUsername(event.target.value);
+  const onChangePassword = (event) => setPassword(event.target.value);
+  const onSignUpSubmit = (event) => {
     event.preventDefault();
-    if (userName === "" || password === "") {
+    if (username === "" || password === "") {
       return;
     }
-    setSignup(true)
-    setUserName("");
+    setUsername("");
     setPassword("");
+    fetch("http://localhost:3000/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username,
+        password: password,
+      }),
+    })
+      .then((response) => {
+        if (response.status >= 200 && response.status <= 299) {
+          setSignup(true);
+          navigate("/dashboard");
+        } else if (response.status >= 500 && response.status <= 599) {
+          // If the response is comes back as bad, clear the username and password fields
+          setUsername("");
+          setPassword("");
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
-    // fetch("/api/signup", {
-    //   method: "POST",
-    //making ssid with
-    // fetch("/api/signup", {
-    //   method: "POST",
-    // })
-    // .then(response. )
-  }
-  
   return (
     <div className="center">
       <h1>Sign Up</h1>
-
-      <form onSubmit={onSubmit} >
-
-        {signup ?
-          <h4>You have been Signed up!</h4>
-          : <h4>Hey, Enter your details to get signed up</h4>}
+      <form onSubmit={onSignUpSubmit}>
+        {signup ? (
+          <h4>Your account has been created</h4>
+        ) : (
+          <h4>Enter your details below to sign up</h4>
+        )}
         <div className="txt_field">
-          
-          <label htmlFor='name' className="form-label">Username
+          <label htmlFor="name" className="form-label">
+            Username
           </label>
-          <span></span>
           <input
+            type="text"
             className="form-input"
-            onChange={onChangeName}
-            value={userName}
-            type="text" />
-          
+            onChange={onChangeUsername}
+            value={username}
+          />
         </div>
         <div className="txt_field">
           <label className="form-label">Password</label>
           <span></span>
           <input
             className="form-input"
-            onChange={onChangePW}
+            onChange={onChangePassword}
             value={password}
-            type="password" />
-          </div>
-          <button className="login-button">Sign Up</button> 
-        
+            type="password"
+          />
+        </div>
+        <button className="login-button" onClick={onSignUpSubmit}>
+          Sign Up
+        </button>
       </form>
-      
-
-      {/* directing to the signup page. */}
-      {/* <button onClick={navigate('/signup')}>Sign up</button> */}
-      
-
+      {/* <button onClick={navigate("/signup")}>Sign up</button> */}
     </div>
-  )
+  );
 }
 
 export default Signup;
