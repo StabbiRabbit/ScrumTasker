@@ -195,11 +195,9 @@ boardsController.deleteBoard = async (req, res, next) => {
     let queryText = "DELETE FROM board WHERE _id = $1";
     let params = [board_id];
     let dbResponse = await db.query(queryText, params);
-
     queryText = "DELETE FROM board_to_user WHERE board_id = $1";
     params = [board_id];
     dbResponse = await db.query(queryText, params);
-
     return next();
   } catch (error) {
     return next({

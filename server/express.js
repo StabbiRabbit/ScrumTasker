@@ -27,21 +27,9 @@ app.get("/", (req, res) => {
   return res.status(202).sendFile(path.join(__dirname, "../build/index.html"));
 });
 
-app.get(
-  "/dashboard",
-  cookieController.validateSSID,
-  cookieController.blockInvalidSession,
-  userController.getAllBoardsFromUser,
-  (req, res) => {
-    if (res.locals.ssidIsValid) res.status(200).json(res.locals.boardInfo);
-    else res.status(501).sendStatus("Invalid SSID");
-  }
-);
-
-
-app.get("/login", (req, res) => {
-  return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
-});
+// app.get("/login", (req, res) => {
+//   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
+// });
 
 // app.get("/home", (req, res) => {
 //   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));

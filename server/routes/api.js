@@ -45,12 +45,13 @@ router.post(
 );
 
 router.get(
-  "/board/:id",
+  "/dashboard",
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
-  boardsController.getBoardFromUser,
+  userController.getAllBoardsFromUser,
   (req, res) => {
-    return res.status(200).json(res.locals.boardInfo);
+    if (res.locals.ssidIsValid) res.status(200).json(res.locals.boardInfo);
+    else res.status(501).sendStatus("Invalid SSID");
   }
 );
 
@@ -59,7 +60,28 @@ router.post(
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.createBoard,
-  userController.getAllBoardsFromUser,
+  // userController.getAllBoardsFromUser,
+  (req, res) => {
+    return res.status(200).json(res.locals.createdBoard);
+  }
+);
+
+router.delete(
+  "/board",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.deleteBoard,
+  (req, res) => {
+    if (res.locals.ssidIsValid) res.sendStatus(200);
+    else res.status(501).sendStatus("Invalid SSID");
+  }
+);
+
+router.get(
+  "/board/:id",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.getBoardFromUser,
   (req, res) => {
     return res.status(200).json(res.locals.boardInfo);
   }

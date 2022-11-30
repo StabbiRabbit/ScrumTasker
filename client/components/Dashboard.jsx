@@ -17,7 +17,7 @@ function Dashboard() {
 
   // Grab user data (name, boards) from database by cookie SSID
   const validateSessionAndGetUserData = () => {    
-    fetch(`${BACKEND_URL}/dashboard`, {
+    fetch(`${BACKEND_URL}/api/dashboard`, {
       method: "GET",
       credentials: "include",
     })
@@ -35,7 +35,7 @@ function Dashboard() {
   }
 
   const createNewBoard = (title) => {
-    fetch(`${BACKEND_URL}/create/board`, {
+    fetch(`${BACKEND_URL}/api/board`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -52,7 +52,7 @@ function Dashboard() {
   };
 
   const deleteBoardById = (board_id) => {
-    fetch(`${BACKEND_URL}/board`, {
+    fetch(`${BACKEND_URL}/api/board`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +61,19 @@ function Dashboard() {
       body: JSON.stringify({
         board_id,
       }),
-    });
+    })
+    .then( (serverResponse) => {
+      if (serverResponse.status >= 200 && serverResponse.status <= 299) {
+        const newBoards = [...boards];
+        for (let i = 0; i < newBoards.length; i++) {
+          if (newBoards[i].id === board_id) {
+            newBoards.splice(i, 1);
+            break;
+          }
+        }
+        setBoards(newBoards);
+      }
+    })
   };
 
   return (
@@ -70,7 +82,7 @@ function Dashboard() {
         <h1 className="dashboard-welcome">Welcome <span className="dashboard-username">{username}</span></h1>
         <button
           className="dashboard-create-button"
-          onClick={() => createNewBoard("New Scrum Board " + boards.length)}
+          onClick={() => createNewBoard("New Scrum Board " + (boards.length + 1))}
         >
           Create +
         </button>
