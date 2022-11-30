@@ -1,6 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const Dotenv = require('dotenv-webpack');
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
   mode: process.env.NODE_ENV,
@@ -48,4 +48,11 @@ module.exports = {
       systemvars: true,
     }),
   ],
+  resolve: {
+    fallback: {
+      fs: false,
+      os: false,
+      path: false,
+    },
+  },
 };

@@ -106,18 +106,23 @@ boardsController.getBoardFromUserUsingCache = async (req, res, next) => {
 boardsController.createBoard = async (req, res, next) => {
   try {
     const { title } = req.body;
-    let queryText = "INSERT INTO board (title) VALUES ($1) RETURNING _id";
+    let queryText =
+      "INSERT INTO board (title) VALUES ($1) RETURNING _id as board_id";
     let params = [title];
     let dbResponse = await db.query(queryText, params);
-    res.locals.board_id = dbResponse.rows[0]._id;
+    res.locals.board_id = dbResponse.rows[0].board_id;
+    res.locals.createdBoard = {
+      id: dbResponse.rows[0].board_id,
+      title,
+    };
     queryText =
       "INSERT INTO board_to_user (board_id, user_id) VALUES ($1, $2);";
-    params = [dbResponse.rows[0]._id, res.locals.user_id];
+    params = [res.locals.board_id, res.locals.user_id];
     dbResponse = await db.query(queryText, params);
     return next();
   } catch (error) {
     return next({
-      log: "Error creating a board",
+      log: "boardsController.createBoard",
       status: 500,
       message: { err: "Could not create the board" },
     });
@@ -190,11 +195,9 @@ boardsController.deleteBoard = async (req, res, next) => {
     let queryText = "DELETE FROM board WHERE _id = $1";
     let params = [board_id];
     let dbResponse = await db.query(queryText, params);
-
     queryText = "DELETE FROM board_to_user WHERE board_id = $1";
     params = [board_id];
     dbResponse = await db.query(queryText, params);
-
     return next();
   } catch (error) {
     return next({

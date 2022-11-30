@@ -10,7 +10,7 @@ root.render(
     <nav>
       <div className="leftNav">
         <Link to="/">
-          <button className="navButton">Sign In</button>
+          <button className="navButton">Log In</button>
         </Link>
         <Link to="/signup">
           <button className="navButton">Sign Up</button>
