@@ -8,16 +8,16 @@ import Dashboard from "./components/Dashboard.jsx";
 import Signup from "./components/Signup.jsx";
 import NotFound from "./components/NotFound.jsx";
 
-function Router() {
+function Page() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/dashboard/" element={<Dashboard />} />
-      <Route path="/dashboard/board/:id" element={<Board />} />
+      <Route path="/board/:id" element={<Board />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
 
-export default Router;
+export default Page;

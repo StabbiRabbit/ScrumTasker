@@ -9,6 +9,30 @@ function Dashboard() {
   const [username, setUsername] = useState("");
   const [board, setBoard] = useState([])
 
+  const checkCookie = () => {
+    console.log("checking cookie...")
+
+
+    fetch("http://localhost:3000/dashboard", {
+      method: "GET",
+      credentials:  "include",
+    })
+      .then(response => {
+        if (response.status === 500) {
+          navigate('/');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setUsername(data.username)
+        setBoard(data.boards);
+      });
+  }
+
+  useEffect(() => {
+    checkCookie();
+  }, [board])
+  
   const deleteButton = (id) => {
     // delete a board that has specific id.
     fetch('http://localhost:3000/delete/board', {
@@ -43,29 +67,7 @@ function Dashboard() {
     })
   }
 
-  const checkCookie = () => {
-    console.log("checking cookie...")
-
-
-    fetch("http://localhost:3000/dashboard", {
-      method: "GET",
-      credentials:  "include",
-    })
-      .then(response => {
-        if (response.status === 500) {
-          navigate('/');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setUsername(data.username)
-        setBoard(data.boards);
-      });
-  }
-
-  useEffect(() => {
-    checkCookie();
-  }, [board])
+  
   
 
   

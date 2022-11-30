@@ -1,46 +1,27 @@
 import React from "react";
-import { BrowserRouter, MemoryRouter, Link } from "react-router-dom";
+import { BrowserRouter, Link } from "react-router-dom";
 import { createRoot } from "react-dom/client";
-import { Provider } from "react-redux";
-
-import store from "./store.js";
-import Router from "./router.js";
-import Login from "./components/Login.jsx";
-import Dashboard from "./components/Dashboard.jsx";
-import Board from "./components/Board.jsx";
-import Signup from "./components/Signup.jsx";
+import Page from "./Page.js";
 
 const root = createRoot(document.getElementById("root"));
 
 root.render(
-  <Provider store={store}>
-    <MemoryRouter>
-      <nav className="directions">
-        <div className="leftNav">
-          <button className="navButton">
-            <Link to="/" className="link-text">
-              Sign In
-            </Link>
-          </button>
-          <button className="navButton">
-            <Link to="/signup" className="link-text">
-              Sign Up
-            </Link>
-          </button>
-        </div>
-        <div className="rightNav">
-          <button className="navButton">
-            <Link to="dashboard" className="link-text">
-              Dashboard
-            </Link>
-          </button>
-        </div>
-      </nav>
-      {/* <Signup /> */}
-      {/* <Login /> */}
-      {/* <Dashboard /> */}
-      {/* <Board /> */}
-      <Router />
-    </MemoryRouter>
-  </Provider>
+  <BrowserRouter>
+    <nav>
+      <div className="leftNav">
+        <Link to="/">
+          <button className="navButton">Sign In</button>
+        </Link>
+        <Link to="/signup">
+          <button className="navButton">Sign Up</button>
+        </Link>
+      </div>
+      <div className="rightNav">
+        <Link to="dashboard">
+          <button className="navButton">Dashboard</button>
+        </Link>
+      </div>
+    </nav>
+    <Page />
+  </BrowserRouter>
 );
