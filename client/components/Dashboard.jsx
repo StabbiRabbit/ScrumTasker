@@ -45,7 +45,7 @@ function Dashboard() {
     })
       .then((serverResponse) => serverResponse.json())
       .then((serverResponseJson) => {
-        setBoards(serverResponseJson.boards);
+        setBoards([...boards, serverResponseJson]);
       });
   };
 

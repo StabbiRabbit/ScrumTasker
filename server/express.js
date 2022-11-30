@@ -91,9 +91,9 @@ app.post(
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.createBoard,
-  userController.getAllBoardsFromUser,
+  // userController.getAllBoardsFromUser,
   (req, res) => {
-    return res.status(200).json(res.locals.boardInfo);
+    return res.status(200).json(res.locals.createdBoard);
   }
 );
 
