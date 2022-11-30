@@ -103,7 +103,7 @@ function Dashboard() {
               <button
                 className="board-element-button"
                 onClick={() => {
-                  navigate(`./board/${board.id}`);
+                  navigate(`../board/${board.id}`);
                 }}
                 id={board.id}
               >
