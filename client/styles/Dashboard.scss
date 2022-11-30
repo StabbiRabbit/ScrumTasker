@@ -43,6 +43,19 @@ $delete-button-color: rgba(255, 0, 0, 0.75);
   color: #f5f4f3;
   font-family: "Oswald", sans-serif;
   font-size: 26px;
+  font-weight: 600;
+  text-align: left;
+  width: auto;
+  padding: 10px;
+  outline: none;
+  background: none;
+  border-radius: 10px;
+  cursor: text;
+  text-decoration: none;
+  border: none;
+  &:focus {
+    border: 1px solid gray;
+  }
 }
 
 .dashboard-boards {

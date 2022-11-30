@@ -21,21 +21,20 @@ function Dashboard() {
       credentials: "include",
       body: JSON.stringify({
         board_id,
-        title
+        title,
       }),
       headers: {
-        'Content-type': 'application/json',
+        "Content-type": "application/json",
       },
-    })
-      .then((serverResponse) => {
-        if (serverResponse.status >= 200 && serverResponse.status <= 299) {
-          return;
-        }
-      })
-  }
+    }).then((serverResponse) => {
+      if (serverResponse.status >= 200 && serverResponse.status <= 299) {
+        return;
+      }
+    });
+  };
 
   // Grab user data (name, boards) from database by cookie SSID
-  const validateSessionAndGetUserData = () => {    
+  const validateSessionAndGetUserData = () => {
     fetch(`${BACKEND_URL}/api/dashboard`, {
       method: "GET",
       credentials: "include",
@@ -51,7 +50,7 @@ function Dashboard() {
         setUsername(serverResponseJson.username);
         setBoards([...serverResponseJson.boards]);
       });
-  }
+  };
 
   const createNewBoard = (title) => {
     fetch(`${BACKEND_URL}/api/board`, {
@@ -80,8 +79,7 @@ function Dashboard() {
       body: JSON.stringify({
         board_id,
       }),
-    })
-    .then( (serverResponse) => {
+    }).then((serverResponse) => {
       if (serverResponse.status >= 200 && serverResponse.status <= 299) {
         const newBoards = [...boards];
         for (let i = 0; i < newBoards.length; i++) {
@@ -92,16 +90,20 @@ function Dashboard() {
         }
         setBoards(newBoards);
       }
-    })
+    });
   };
 
   return (
     <div>
       <header className="dashboard-header">
-        <h1 className="dashboard-welcome">Welcome <span className="dashboard-username">{username}</span></h1>
+        <h1 className="dashboard-welcome">
+          Welcome <span className="dashboard-username">{username}</span>
+        </h1>
         <button
           className="dashboard-create-button"
-          onClick={() => createNewBoard("New Scrum Board " + (boards.length + 1))}
+          onClick={() =>
+            createNewBoard("New Scrum Board " + (boards.length + 1))
+          }
         >
           Create +
         </button>
@@ -111,30 +113,36 @@ function Dashboard() {
           <div className="dashboard-boards">
             <div className="board-element">
               {/* <h1 className="dashboard-board-title">{board.title}</h1> */}
-              <form 
+              <form
                 onBlur={(e) => {
                   const title = board.title;
-                  updateBoardTitleById(board.id, title)}
-                }
+                  updateBoardTitleById(board.id, title);
+                }}
                 onSubmit={(e) => {
-                e.preventDefault();
-                const title = board.title;
-                updateBoardTitleById(board.id, title)
-              }}>
-                <input type="text" 
-                // onDoubleClick={(event) => event.target.removeAttribute("readonly")}
-                // readOnly 
-                value={board.title} onChange={(e) => {
-                  const newBoards = [...boards];
-                  for (let i = 0; i < newBoards.length; i++) {
-                    let newBoard = Object.assign({}, newBoards[i]);
-                    if (newBoard.id === board.id) {
-                      newBoard.title = e.target.value
+                  e.preventDefault();
+                  const title = board.title;
+                  updateBoardTitleById(board.id, title);
+                }}
+              >
+                <input
+                  className="dashboard-board-title"
+                  type="text"
+                  // onDoubleClick={(event) => event.target.removeAttribute("readonly")}
+                  // readOnly
+                  value={board.title}
+                  onChange={(event) => {
+                    const newBoards = [...boards];
+                    for (let i = 0; i < newBoards.length; i++) {
+                      let newBoard = Object.assign({}, newBoards[i]);
+                      if (newBoard.id === board.id) {
+                        newBoard.title = event.target.value;
+                      }
+                      newBoards[i] = newBoard;
                     }
-                    newBoards[i] = newBoard;
-                  }
-                  setBoards([...newBoards]);
-                }}></input>
+                    setBoards([...newBoards]);
+                    event.target.style.width = event.target.value.length + 2 + 'ch';
+                  }}
+                ></input>
               </form>
             </div>
             <div className="board-element">
