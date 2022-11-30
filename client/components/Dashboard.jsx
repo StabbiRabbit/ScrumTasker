@@ -2,104 +2,101 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.scss";
 
-const { BACKEND_URL } = process.env;
+const { BACKEND_URL } = process.env;;
 
 function Dashboard() {
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
-  const [board, setBoard] = useState([]);
+  const [boards, setBoards] = useState([]);;
 
-  const checkCookie = () => {
-    console.log("checking cookie...");
+  // On initial page load, check if the session is valid and grab user data
+  useEffect(() => {
+    validateSessionAndGetUserData();
+  }, []);;
 
+  // Grab user data (name, boards) from database by cookie SSID
+  const validateSessionAndGetUserData = () => {    
     fetch(`${BACKEND_URL}/dashboard`, {
       method: "GET",
       credentials: "include",
     })
-      .then((response) => {
-        if (response.status === 500) {
-          navigate("/");
+      .then((serverResponse) => {
+        // If session is invalid, redirect to login page
+        if (serverResponse.status >= 500 && serverResponse.status <= 599) {
+          return navigate("/");
         }
-        return response.json();
+        return serverResponse.json();
       })
-      .then((data) => {
-        setUsername(data.username);
-        setBoard(data.boards);
+      .then((serverResponseJson) => {
+        setUsername(serverResponseJson.username);
+        setBoards([...serverResponseJson.boards]);
       });
+  }
   };
 
-  useEffect(() => {
-    checkCookie();
-  }, [board]);
-
-  const deleteButton = (id) => {
-    // delete a board that has specific id.
-    fetch(`${BACKEND_URL}/api/board`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        board_id: id,
-      }),
-    });
-  };
-
-  const createBoard = () => {
-    const test = "New Title";
-
-    fetch(`${BACKEND_URL}/api/board`, {
+  const createNewBoard = (title) => {
+    fetch("http://localhost:3000/create/board", {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title: test,
+        title,
       }),
     })
-      .then((res) => res.json())
-      .then((data) => {
-        setBoard(data);
+      .then((serverResponse) => serverResponse.json())
+      .then((serverResponseJson) => {
+        setBoards([...boards, serverResponseJson]);
       });
+  };
+
+  const deleteBoardById = (board_id) => {
+    fetch("http://localhost:3000/delete/board", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        board_id,
+      }),
+    });
   };
 
   return (
     <div>
-      <header className='dashboard-header'>
-        <h1 className='dashboard-welcome'>{`Welcome ${username}!`}</h1>
+      <header className="dashboard-header">
+        <h1 className="dashboard-welcome">{`Welcome ${username}!`}</h1>
         <button
-          className='dashboard-create-button'
-          onClick={() => createBoard()}
+          className="dashboard-create-button"
+          onClick={() => createNewBoard("New Scrum Board #" + boards.length)}
         >
           Create +
         </button>
       </header>
       <div>
-        {board.map((board) => (
-          <div className='dashboard-boards'>
-            <div className='board-element'>
-              <h1 className='dashboard-board-title'>{board.title}</h1>
+        {boards.map((board) => (
+          <div className="dashboard-boards">
+            <div className="board-element">
+              <h1 className="dashboard-board-title">{board.title}</h1>
             </div>
-            <div className='board-element'>
+            <div className="board-element">
               <button
-                className='board-element-button'
-                id='dashboarddeletebutton'
-                onClick={() => deleteButton(board.id)}
+                className="board-element-button"
+                id="dashboarddeletebutton"
+                onClick={() => deleteBoardById(board.id)}
               >
-                {" "}
-                Delete{" "}
+                Delete
               </button>
               <button
-                className='board-element-button'
+                className="board-element-button"
                 onClick={() => {
                   navigate(`./board/${board.id}`);
                 }}
                 id={board.id}
               >
-                {" "}
                 Open
               </button>
             </div>

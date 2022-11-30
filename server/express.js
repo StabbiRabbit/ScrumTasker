@@ -86,10 +86,11 @@ app.get("/login", (req, res) => {
 //   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
 // });
 
-// // Going to take query strings
-// app.get("/board", (req, res) => {
-//   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));
-// });
+// app.use("/build", express.static(path.join(__dirname, "../build")));
+
+app.use((req, res) =>
+  res.status(404).redirect('/')
+);
 
 app.use((err, req, res, next) => {
   const defaultErr = {
