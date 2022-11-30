@@ -48,16 +48,16 @@ CREATE TABLE  public.story_to_board (
   "board_id" integer NOT NULL
 );
 
-CREATE TABLE  public.task (
-	"_id" serial NOT NULL,
-  "description" varchar NOT NULL,
-  "status" varchar NOT NULL,
-  "priority" integer NOT NULL
-);
+-- CREATE TABLE  public.task (
+-- 	"_id" serial NOT NULL,
+--   "description" varchar NOT NULL,
+--   "status" varchar NOT NULL,
+--   "priority" integer NOT NULL
+-- );
 
-CREATE TABLE  public.task_to_story (
-	"_id" serial NOT NULL,
-  "task_id" integer NOT NULL,
-  "story_id" integer NOT NULL
-);
+-- CREATE TABLE  public.task_to_story (
+-- 	"_id" serial NOT NULL,
+--   "task_id" integer NOT NULL,
+--   "story_id" integer NOT NULL
+-- );
 

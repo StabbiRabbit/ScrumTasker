@@ -1,4 +1,5 @@
 const db = require("../db.js");
+const Task = require("../task.js");
 
 const boardsController = {};
 
@@ -157,7 +158,7 @@ boardsController.createStory = async (req, res, next) => {
 boardsController.createTask = async (req, res, next) => {
   try {
     // console.log(req.body.story_id);
-    const { description, status, priority, story_id } = req.body;
+    // const { description, status, priority, story_id } = req.body;
     let queryText =
       "INSERT INTO task (description, status, priority) VALUES ($1, $2, $3) RETURNING _id;";
     let params = [description, status, priority];
@@ -178,6 +179,17 @@ boardsController.createTask = async (req, res, next) => {
     console.log(dbResponse.rows);
     res.locals.board_id = dbResponse.rows[0].board_id;
     // console.log("i was here4");
+
+    const { description, status, priority, story_id } = req.body;
+    // Sequelized Queries and Creation
+    const task = new Task.create(
+      {
+        description: description,
+        status: status,
+        priority: priority,
+        story_id: story_id
+      }
+    )
 
     return next();
   } catch (error) {
