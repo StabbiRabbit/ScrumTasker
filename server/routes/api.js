@@ -77,6 +77,16 @@ router.delete(
   }
 );
 
+router.patch(
+  "/board",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.updateBoardTitle,
+  (req, res) => {
+    return res.sendStatus(200)
+  }
+)
+
 router.get(
   "/board/:id",
   cookieController.validateSSID,

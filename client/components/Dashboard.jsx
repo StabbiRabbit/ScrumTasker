@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 import "../styles/Dashboard.scss";
 
 const { BACKEND_URL } = process.env;
@@ -14,6 +14,25 @@ function Dashboard() {
   useEffect(() => {
     validateSessionAndGetUserData();
   }, []);
+
+  const updateBoardTitleById = (board_id, title) => {
+    fetch(`${BACKEND_URL}/api/board`, {
+      method: "PATCH",
+      credentials: "include",
+      body: JSON.stringify({
+        board_id,
+        title
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      },
+    })
+      .then((serverResponse) => {
+        if (serverResponse.status >= 200 && serverResponse.status <= 299) {
+          return;
+        }
+      })
+  }
 
   // Grab user data (name, boards) from database by cookie SSID
   const validateSessionAndGetUserData = () => {    
@@ -91,7 +110,32 @@ function Dashboard() {
         {boards.map((board) => (
           <div className="dashboard-boards">
             <div className="board-element">
-              <h1 className="dashboard-board-title">{board.title}</h1>
+              {/* <h1 className="dashboard-board-title">{board.title}</h1> */}
+              <form 
+                onBlur={(e) => {
+                  const title = board.title;
+                  updateBoardTitleById(board.id, title)}
+                }
+                onSubmit={(e) => {
+                e.preventDefault();
+                const title = board.title;
+                updateBoardTitleById(board.id, title)
+              }}>
+                <input type="text" 
+                // onDoubleClick={(event) => event.target.removeAttribute("readonly")}
+                // readOnly 
+                value={board.title} onChange={(e) => {
+                  const newBoards = [...boards];
+                  for (let i = 0; i < newBoards.length; i++) {
+                    let newBoard = Object.assign({}, newBoards[i]);
+                    if (newBoard.id === board.id) {
+                      newBoard.title = e.target.value
+                    }
+                    newBoards[i] = newBoard;
+                  }
+                  setBoards([...newBoards]);
+                }}></input>
+              </form>
             </div>
             <div className="board-element">
               <button
