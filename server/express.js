@@ -171,9 +171,9 @@ app.get("/board", (req, res) => {
 
 // app.use("/build", express.static(path.join(__dirname, "../build")));
 
-// app.use((req, res) =>
-//   res.status(404).send("Sorry! The page you're looking for doesn't exist")
-// );
+app.use((req, res) =>
+  res.status(404).redirect('/')
+);
 
 app.use((err, req, res, next) => {
   const defaultErr = {
