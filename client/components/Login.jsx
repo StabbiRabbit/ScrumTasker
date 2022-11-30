@@ -12,7 +12,7 @@ function Login() {
   const [loginAttempted, setLoginAttempted] = useState(false);
 
   // On initial page load, check if the session is valid; if so, redirect to dashboard;
-  useEffect(() => skipLoginIfSessionIsValid(), []);
+  useEffect(() => validateSessionAndSkipLogin(), []);
 
   const onChangeUsername = (event) => setUsername(event.target.value);
   const onChangePassword = (event) => setPassword(event.target.value);
@@ -46,7 +46,7 @@ function Login() {
       .catch((err) => console.log(err));
   };
 
-  const skipLoginIfSessionIsValid = () => {
+  const validateSessionAndSkipLogin = () => {
     fetch("http://localhost:3000/login", {
       method: "GET",
       credentials: "include",
