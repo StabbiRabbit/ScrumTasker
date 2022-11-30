@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-// react router linking for signup and login
-import { Link, useNavigate } from "react-router-dom";;
+
+import { Link, useNavigate } from "react-router-dom";
+
 import "../styles/Login.scss";
 
 const { BACKEND_URL } = process.env;;
@@ -10,10 +11,13 @@ function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [tried, setTried] = useState(false);
+  const [loginAttempted, setLoginAttempted] = useState(false);
 
-  const onChangeName = (event) => setUsername(event.target.value);
-  const onChangePW = (event) => setPassword(event.target.value);
+  // On initial page load, check if the session is valid; if so, redirect to dashboard;
+  useEffect(() => validateSessionAndSkipLogin(), []);
+
+  const onChangeUsername = (event) => setUsername(event.target.value);
+  const onChangePassword = (event) => setPassword(event.target.value);
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -32,12 +36,11 @@ function Login() {
       }),
     })
       .then((response) => {
-        // console.log(response.status)
-        if (response.status === 200) {
+        if (response.status >= 200 && response.status <= 299) {
           navigate("/dashboard");
         } else if (response.status >= 500 && response.status <= 599) {
           // If the response is comes back as bad, clear the username and password fields
-          setTried(true);
+          setLoginAttempted(true);
           setUsername("");
           setPassword("");
         }
@@ -45,12 +48,12 @@ function Login() {
       .catch((err) => console.log(err));
   };
 
-  const skipLoginIfValidSession = () => {
+  const validateSessionAndSkipLogin = () => {
     fetch(`${BACKEND_URL}/login`, {
       method: "GET",
       credentials: "include",
     }).then((response) => {
-      if (response.status === 200) {
+      if (response.status >= 200 && response.status <= 299) {
         navigate("./dashboard");
       } else {
         return;
@@ -58,15 +61,11 @@ function Login() {
     });
   };
 
-  useEffect(() => {
-    skipLoginIfValidSession();
-  }, []);
-
   return (
     <div className='center'>
       <h1>User Login</h1>
       <form onSubmit={onSubmit}>
-        {tried ? (
+        {loginAttempted ? (
           <h4 className="wrong-input-message">
             Incorrect username or password. Please try again or sign up for a
             new account
@@ -78,10 +77,9 @@ function Login() {
           <label htmlFor="name" className="form-label">
             Username
           </label>
-          <span></span>
           <input
             className="form-input"
-            onChange={onChangeName}
+            onChange={onChangeUsername}
             value={username}
             type="text"
           />
@@ -91,12 +89,12 @@ function Login() {
           <span></span>
           <input
             className="form-input"
-            onChange={onChangePW}
+            onChange={onChangePassword}
             value={password}
             type="password"
           />
         </div>
-        <button className="login-button">Sign in</button>
+        <button className="login-button">Log in</button>
       </form>
     </div>
   );
