@@ -1,6 +1,7 @@
 const { Pool } = require("pg");
-// Pool.defaults.ssl = true;
-// pool.defaults.ssl = true;
+const dotenv = require("dotenv")
+dotenv.config()
+
 const PG_URI = process.env.PG_URI;
 
 const pool = new Pool({

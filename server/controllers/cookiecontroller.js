@@ -39,7 +39,6 @@ cookieController.validateSSID = async (req, res, next) => {
       "SELECT sessions.ssid, sessions.user_id, users.username FROM sessions JOIN users ON users._id = sessions.user_id WHERE sessions.ssid = $1;";
     let params = [req.cookies.ssid];
     const dbResponse = await db.query(queryText, params);
-    console.log("DB", dbResponse.rows);
     if (dbResponse.rows.length === 1) {
       // Persist user information through res.locals for later middleware
       res.locals.username = dbResponse.rows[0].username;

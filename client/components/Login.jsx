@@ -1,99 +1,104 @@
 import React, { useState, useEffect } from "react";
 // react router linking for signup and login
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom";
 
-import "../styles/Login.scss"
+import "../styles/Login.scss";
 
 function Login() {
-
   // state control of username and password
   const navigate = useNavigate();
-
-  const [userName, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [tried, setTried] = useState(false);
 
-  const onChangeName = (event) => setUserName(event.target.value);
+  const onChangeName = (event) => setUsername(event.target.value);
   const onChangePW = (event) => setPassword(event.target.value);
 
   const onSubmit = (event) => {
     event.preventDefault();
-    if (userName === "" || password === "") {
+    if (username === "" || password === "") {
       return;
     }
     fetch("http://localhost:3000/login", {
       method: "POST",
       credentials: "include",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: userName,
-        password: password
-      })
+        username: username,
+        password: password,
+      }),
     })
-      .then(response => {
-        console.log(response.status)
+      .then((response) => {
+        // console.log(response.status)
         if (response.status === 200) {
           navigate("/dashboard");
-        } else if (response.status === 501 || response.status === 500) { 
+        } else if (response.status >= 500 && response.status <= 599) {
+          // If the response is comes back as bad, clear the username and password fields
           setTried(true);
-          setUserName("");
+          setUsername("");
           setPassword("");
         }
       })
-      .catch(err =>console.log(err))
-    // navigate('/dashboard')
-  }
-  
-  const checkCookie = () => {
-   
+      .catch((err) => console.log(err));
+  };
+
+  const skipLoginIfValidSession = () => {
     fetch("http://localhost:3000/login", {
-      method: 'GET',
-      credentials: 'include',
+      method: "GET",
+      credentials: "include",
     }).then((response) => {
       if (response.status === 200) {
-        navigate('./dashboard')
-      } else { return; }
-    })
-  }
+        navigate("./dashboard");
+      } else {
+        return;
+      }
+    });
+  };
 
   useEffect(() => {
-    checkCookie();
-  }, [])
-
+    skipLoginIfValidSession();
+  }, []);
 
   return (
     <div className="center">
       <h1>User Login</h1>
-      <form onSubmit={onSubmit} >
-        {tried ?
-        <h4 className="wrong-input-message">Wrong input of username or password! Please sign up or enter correct details</h4>
-        : <h4>Hey, Enter your details to get sign in to your account</h4>}
-      <div className="txt_field">  
-        <label htmlFor='name' className="form-label">Username
-        </label>
-        <span></span>
-        <input
+      <form onSubmit={onSubmit}>
+        {tried ? (
+          <h4 className="wrong-input-message">
+            Incorrect username or password. Please try again or sign up for a
+            new account
+          </h4>
+        ) : (
+          <h4>Enter your details below to log in to your account</h4>
+        )}
+        <div className="txt_field">
+          <label htmlFor="name" className="form-label">
+            Username
+          </label>
+          <span></span>
+          <input
             className="form-input"
             onChange={onChangeName}
-            value={userName}
-            type="text" />
-      </div>
-      <div className="txt_field">
-        <label className="form-label">Password</label>
-        <span></span>
-        <input
-          className="form-input"
-          onChange={onChangePW}
-          value={password}
-          type="password" />
-      </div>
-      <button className="login-button">Sign in</button> 
+            value={username}
+            type="text"
+          />
+        </div>
+        <div className="txt_field">
+          <label className="form-label">Password</label>
+          <span></span>
+          <input
+            className="form-input"
+            onChange={onChangePW}
+            value={password}
+            type="password"
+          />
+        </div>
+        <button className="login-button">Sign in</button>
       </form>
     </div>
-  )
+  );
 }
 
 export default Login;
-
