@@ -28,7 +28,7 @@ function Dashboard() {
       })
       .then((serverResponseJson) => {
         setUsername(serverResponseJson.username);
-        setBoards(serverResponseJson.boards);
+        setBoards([...serverResponseJson.boards]);
       });
   };
 
@@ -68,7 +68,7 @@ function Dashboard() {
         <h1 className="dashboard-welcome">{`Welcome ${username}!`}</h1>
         <button
           className="dashboard-create-button"
-          onClick={() => createNewBoard()}
+          onClick={() => createNewBoard("New Scrum Board #" + boards.length)}
         >
           Create +
         </button>
