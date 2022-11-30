@@ -16,6 +16,19 @@ function Login() {
   // On initial page load, check if the session is valid; if so, redirect to dashboard;
   useEffect(() => validateSessionAndSkipLogin(), []);
 
+  const validateSessionAndSkipLogin = () => {
+    fetch(`${BACKEND_URL}/api/login`, {
+      method: "GET",
+      credentials: "include",
+    }).then((response) => {
+      if (response.status >= 200 && response.status <= 299) {
+        navigate("./dashboard");
+      } else {
+        return;
+      }
+    });
+  };
+
   const onChangeUsername = (event) => setUsername(event.target.value);
   const onChangePassword = (event) => setPassword(event.target.value);
 
@@ -24,7 +37,7 @@ function Login() {
     if (username === "" || password === "") {
       return;
     }
-    fetch(`${BACKEND_URL}/login`, {
+    fetch(`${BACKEND_URL}/api/login`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -46,19 +59,6 @@ function Login() {
         }
       })
       .catch((err) => console.log(err));
-  };
-
-  const validateSessionAndSkipLogin = () => {
-    fetch(`${BACKEND_URL}/login`, {
-      method: "GET",
-      credentials: "include",
-    }).then((response) => {
-      if (response.status >= 200 && response.status <= 299) {
-        navigate("./dashboard");
-      } else {
-        return;
-      }
-    });
   };
 
   return (

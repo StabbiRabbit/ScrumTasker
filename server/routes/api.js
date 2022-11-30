@@ -22,6 +22,28 @@ router.post(
   }
 );
 
+router.get("/login", cookieController.validateSSID, (req, res) => {
+  if (res.locals.ssidIsValid) res.status(200).json(res.locals.boardInfo);
+  else res.status(501).sendStatus("Invalid SSID");
+});
+
+router.post(
+  "/login",
+  userController.validateUsername,
+  userController.validatePassword,
+  cookieController.setSSIDCookie,
+  (req, res) => {
+    if (res.locals.passwordIsValid && res.locals.usernameIsValid) {
+      res.status(200).json({
+        username: res.locals.username,
+        boards: res.locals.boards,
+      });
+    } else {
+      res.status(501).send("Error Logging In, Wrong Username or Password");
+    }
+  }
+);
+
 router.get(
   "/board/:id",
   cookieController.validateSSID,
