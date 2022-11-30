@@ -1,3 +1,8 @@
+$open-button-color: rgba(97, 96, 96, 0.75);
+$open-button-color: rgba(97, 96, 96, 0.75);
+$open-button-color-hover: rgba(57, 57, 60, 0.75);
+$delete-button-color: rgba(255, 0, 0, 0.75);
+
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -5,9 +10,13 @@
   }
   
   .dashboard-welcome {
-    color: #ececec;
+    color: #f5f4f3;
     font-family: 'Oswald', sans-serif;
     font-size: 26px;
+    font-weight: 500;
+    .dashboard-username {
+      font-weight: 700;
+    }
   }
   
   .dashboard-create-button {
@@ -64,15 +73,15 @@
   
   .board-element-button {
     background: rgba(46, 46, 48, 0.75);
-    padding: 2px 17px;
-    margin: 0px 7px;
-    border: 1px solid rgba(97, 96, 96, 0.75);
-    border-radius: 5px;
+    padding: 2px 20px;
+    margin: 0px 8px;
+    border: 2px solid rgba(97, 96, 96, 0.75);
+    border-radius: 10px;
     color: #f5f4f3
   }
   
   .board-element-button:hover {
-    border: 1px solid rgba(138, 138, 138, 0.75);
+    border: 2px solid rgba(138, 138, 138, 0.75);
     background: rgba(57, 57, 60, 0.75);
     transition: 0.5s;
   }
@@ -80,6 +89,7 @@
   .board-element-button:active {
     border: 1px solid rgba(189, 189, 189, 0.75);
 }
-#dashboarddeletebutton {
+.delete-button {
   color: red;
+  border-color: darken($delete-button-color, 25%);
 }

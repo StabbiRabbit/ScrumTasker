@@ -65,10 +65,10 @@ function Dashboard() {
   return (
     <div>
       <header className="dashboard-header">
-        <h1 className="dashboard-welcome">{`Welcome ${username}!`}</h1>
+        <h1 className="dashboard-welcome">Welcome <span className="dashboard-username">{username}</span></h1>
         <button
           className="dashboard-create-button"
-          onClick={() => createNewBoard("New Scrum Board #" + boards.length)}
+          onClick={() => createNewBoard("New Scrum Board " + boards.length)}
         >
           Create +
         </button>
@@ -81,8 +81,7 @@ function Dashboard() {
             </div>
             <div className="board-element">
               <button
-                className="board-element-button"
-                id="dashboarddeletebutton"
+                className="board-element-button delete-button"
                 onClick={() => deleteBoardById(board.id)}
               >
                 Delete
