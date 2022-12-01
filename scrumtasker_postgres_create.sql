@@ -27,7 +27,8 @@ CREATE TABLE public.sessions (
 
 CREATE TABLE public.board (
 	"_id" serial NOT NULL,
-	"title" varchar NOT NULL
+	"title" varchar NOT NULL,
+  "index" integer
 );
 
 CREATE TABLE  public.board_to_user (
