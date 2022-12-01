@@ -102,9 +102,9 @@ router.post(
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.createStory,
-  boardsController.getBoardFromUserUsingCache,
+  // boardsController.getBoardFromUserUsingCache,
   (req, res) => {
-    return res.status(200).json(res.locals.boardInfo);
+    return res.status(200).json(res.locals.createdStory);
   }
 );
 

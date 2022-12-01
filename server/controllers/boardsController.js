@@ -138,12 +138,15 @@ boardsController.createStory = async (req, res, next) => {
     let dbResponse = await db.query(queryText, params);
     res.locals.story_id = dbResponse.rows[0]._id;
     res.locals.board_id = board_id;
-
     queryText =
       "INSERT INTO story_to_board (story_id, board_id) VALUES ($1, $2);";
     params = [dbResponse.rows[0]._id, board_id];
     dbResponse = await db.query(queryText, params);
-
+    res.locals.createdStory = {
+      story_id: res.locals.story_id,
+      text,
+      completed,
+    }
     return next();
   } catch (error) {
     return next({
@@ -281,6 +284,6 @@ boardsController.updateBoardTitle = async (req, res, next) => {
       message: { err: `Could not update the board title\nQUERY: ${queryText}` },
     });
   }
-}
+};
 
 module.exports = boardsController;
