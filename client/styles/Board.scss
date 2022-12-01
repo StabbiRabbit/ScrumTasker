@@ -110,8 +110,10 @@
   transition: 0.25s;
 }
 
-.button-container {
+.button-row {
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-evenly;
+
 }

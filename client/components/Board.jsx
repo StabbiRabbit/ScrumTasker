@@ -65,18 +65,50 @@ function Board() {
       });
   };
 
-  const deleteStory = (story) => {
+  const addTaskToStory = (newTask) => {
+    fetch(`${BACKEND_URL}/api/task`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTask),
+    })
+      .then((serverResponse) => {
+        // if (response.status >= 200 && response.status <= 299)
+        return serverResponse.json();
+      })
+      .then((serverResponseJson) => {
+        const createdTask = serverResponseJson;
+        switch (createdTask.status) {
+          case "TO_DO":
+            setTasksToDo((tasksToDo) => [...tasksToDo, createdTask]);
+            break;
+          case "IN_PROCESS":
+            setTasksInProcess([...tasksInProcess, createdTask]);
+            break;
+          case "IN_TESTING":
+            setTasksInTesting([...tasksInTesting, createdTask]);
+            break;
+          case "DONE":
+            setTasksDone([...tasksDone, createdTask]);
+            break;
+        }
+      });
+  };
+
+  const deleteStory = (storyToBeDeleted) => {
     fetch(`${BACKEND_URL}/api/story`, {
       method: "DELETE",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(story),
+      body: JSON.stringify(storyToBeDeleted),
     }).then((serverResponse) => {
       if (serverResponse.status >= 200 && serverResponse.status <= 299) {
         const newStories = [...stories];
-        newStories.splice([stories.indexOf(story)], 1);
+        newStories.splice([stories.indexOf(storyToBeDeleted)], 1);
         setStories(newStories);
       }
     });
@@ -137,38 +169,6 @@ function Board() {
     });
   };
 
-  const addTaskToStory = (newTask) => {
-    fetch(`${BACKEND_URL}/api/task`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newTask),
-    })
-      .then((serverResponse) => {
-        // if (response.status >= 200 && response.status <= 299)
-        return serverResponse.json();
-      })
-      .then((serverResponseJson) => {
-        const createdTask = serverResponseJson;
-        switch (createdTask.status) {
-          case "TO_DO":
-            setTasksToDo((tasksToDo) => [...tasksToDo, createdTask]);
-            break;
-          case "IN_PROCESS":
-            setTasksInProcess([...tasksInProcess, createdTask]);
-            break;
-          case "IN_TESTING":
-            setTasksInTesting([...tasksInTesting, createdTask]);
-            break;
-          case "DONE":
-            setTasksDone([...tasksDone, createdTask]);
-            break;
-        }
-      });
-  };
-
   return (
     <div>
       <body className="cards-container">
@@ -176,32 +176,19 @@ function Board() {
           <h1 className="board-heading">Stories</h1>
           {stories.map((story) => (
             <div className="cards">
-              <form>
-                <textarea
-                  className="updateable-title story"
-                  value={story.text}
-                  onChange={(event) => {
-                    const newStories = [...stories];
-                    for (let i = 0; i < newStories.length; i++) {
-                      let newStory = Object.assign({}, newStories[i]);
-                      if (newStory.story_id === story.story_id) {
-                        newStory.text = event.target.value;
-                      }
-                      newStories[i] = newStory;
-                    }
-                    setStories(newStories);
-                    event.target.style.height =
-                      event.target.scrollHeight + "px";
-                  }}
-                  onBlur={(event) => {
-                    updateStory(story);
-                  }}
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    updateStory(story);
-                  }}
-                ></textarea>
-              </form>
+              <textarea
+                className="updateable-title story"
+                value={story.text}
+                onChange={(event) => {
+                  const newStories = [...stories];
+                  newStories[stories.indexOf(story)].text = event.target.value;
+                  setStories(newStories);
+                  event.target.style.height = event.target.scrollHeight + "px";
+                }}
+                onBlur={(event) => {
+                  updateStory(story);
+                }}
+              ></textarea>
               <button
                 className="card-button"
                 onClick={() => {
@@ -225,7 +212,7 @@ function Board() {
               </button>
             </div>
           ))}
-          <div className="button-container">
+          <div className="button-row">
             <button
               onClick={() => {
                 addStoryToBoard({
