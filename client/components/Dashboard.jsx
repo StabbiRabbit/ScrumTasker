@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { json, useNavigate } from "react-router-dom";
+import { ReactSortable } from "react-sortablejs";
+import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.scss";
 
 const { BACKEND_URL } = process.env;
@@ -15,14 +16,42 @@ function Dashboard() {
     validateSessionAndGetUserData();
   }, []);
 
-  const updateBoardTitleById = (board_id, title) => {
+  // useEffect(() => {
+  //   fetch(`${BACKEND_URL}/api/board`, {
+  //     method: "POST",
+  //     credentials: "include",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       boards,
+  //     }),
+  //   })
+  //     .then((serverResponse) => serverResponse.json())
+  //     .then((serverResponseJson) => {
+  //       setBoards(serverResponseJson)
+  //     })
+  // },[boards])
+  
+  useEffect(() => {
+    updateBoard(boards)
+  }, [boards])
+
+  const onSortEnd = (e) => {
+    const { newIndex, oldIndex } = e
+    const newBoard = [...boards]
+    swapBoard(newBoard, oldIndex, newIndex)
+    setBoards(newBoard)
+  };
+
+  const updateBoard = (updatedBoard) => {
+    for (let i = 0; i < updatedBoard.length; i++) {
+      updatedBoard[i].index = i
+    }
     fetch(`${BACKEND_URL}/api/board`, {
       method: "PATCH",
       credentials: "include",
-      body: JSON.stringify({
-        board_id,
-        title,
-      }),
+      body: JSON.stringify(updatedBoard),
       headers: {
         "Content-type": "application/json",
       },
@@ -93,6 +122,13 @@ function Dashboard() {
     });
   };
 
+  //Helper function
+  const swapBoard = (boards, oldIndex, newIndex) => {
+    const temp = boards[oldIndex]
+    boards[oldIndex] = boards[newIndex]
+    boards[newIndex] = temp
+  }
+
   return (
     <div>
       <header className="dashboard-header">
@@ -109,62 +145,64 @@ function Dashboard() {
         </button>
       </header>
       <div>
-        {boards.map((board) => (
-          <div className="dashboard-boards">
-            <div className="board-element">
-              {/* <h1 className="dashboard-board-title">{board.title}</h1> */}
-              <form
-                onBlur={(e) => {
-                  const title = board.title;
-                  updateBoardTitleById(board.id, title);
-                }}
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const title = board.title;
-                  updateBoardTitleById(board.id, title);
-                }}
-              >
-                <input
-                  className="dashboard-board-title"
-                  type="text"
-                  // onDoubleClick={(event) => event.target.removeAttribute("readonly")}
-                  // readOnly
-                  value={board.title}
-                  onChange={(event) => {
-                    const newBoards = [...boards];
-                    for (let i = 0; i < newBoards.length; i++) {
-                      let newBoard = Object.assign({}, newBoards[i]);
-                      if (newBoard.id === board.id) {
-                        newBoard.title = event.target.value;
-                      }
-                      newBoards[i] = newBoard;
-                    }
-                    setBoards([...newBoards]);
-                    event.target.style.width = event.target.value.length + 2 + 'ch';
+          <ReactSortable onEnd={(e) => onSortEnd(e)} delay={1} animation={400} list={boards} setList={setBoards}>
+          {boards.map((board, index) => (
+            <div className="dashboard-boards" key={index}>
+              <div className="board-element">
+                {/* <h1 className="dashboard-board-title">{board.title}</h1> */}
+                <form
+                  onBlur={(e) => {
+                    // const title = board.title;
+                    updateBoard(board);
                   }}
-                ></input>
-              </form>
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    // const title = board.title;
+                    updateBoard(board);
+                  }}
+                >
+                  <input
+                    className="dashboard-board-title"
+                    type="text"
+                    // onDoubleClick={(event) => event.target.removeAttribute("readonly")}
+                    // readOnly
+                    value={board.title}
+                    onChange={(event) => {
+                      const newBoards = [...boards];
+                      for (let i = 0; i < newBoards.length; i++) {
+                        let newBoard = Object.assign({}, newBoards[i]);
+                        if (newBoard.id === board.id) {
+                          newBoard.title = event.target.value;
+                        }
+                        newBoards[i] = newBoard;
+                      }
+                      setBoards([...newBoards]);
+                      event.target.style.width = event.target.value.length + 2 + 'ch';
+                    }}
+                  ></input>
+                </form>
+              </div>
+              <div className="board-element">
+                <button
+                  className="board-element-button delete-button"
+                  onClick={() => deleteBoardById(board.id)}
+                >
+                  Delete
+                </button>
+                <button
+                  className="board-element-button"
+                  onClick={() => {
+                    navigate(`../board/${board.id}`);
+                  }}
+                  id={board.id}
+                >
+                  Open
+                </button>
+              </div>
             </div>
-            <div className="board-element">
-              <button
-                className="board-element-button delete-button"
-                onClick={() => deleteBoardById(board.id)}
-              >
-                Delete
-              </button>
-              <button
-                className="board-element-button"
-                onClick={() => {
-                  navigate(`../board/${board.id}`);
-                }}
-                id={board.id}
-              >
-                Open
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </ReactSortable>
+        </div>
     </div>
   );
 }

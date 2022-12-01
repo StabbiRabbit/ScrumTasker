@@ -81,7 +81,7 @@ router.patch(
   "/board",
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
-  boardsController.updateBoardTitle,
+  boardsController.updateBoard,
   (req, res) => {
     return res.sendStatus(200)
   }
