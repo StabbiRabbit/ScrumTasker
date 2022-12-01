@@ -111,26 +111,21 @@ function Board() {
     });
   };
 
-  const addTaskToStory = (description, status, priority, story_id) => {
+  const addTaskToStory = (newTask) => {
     fetch(`${BACKEND_URL}/api/task`, {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        description,
-        status,
-        priority,
-        story_id,
-      }),
+      body: JSON.stringify(newTask),
     })
       .then((serverResponse) => {
         return serverResponse.json();
       })
       .then((serverResponseJson) => {
         setStories(serverResponseJson.stories);
-        setTodo();
+        setTasksToDo();
         for (const story of serverResponseJson.stories) {
           setTodo([...tasksToDo, story.tasks]);
           // for (const task of story.tasks) {
@@ -202,9 +197,14 @@ function Board() {
               </button>
               <button
                 className="card-button"
-                // onClick={() =>
-                //   addTaskToStory("new task", "TO_DO", 1, story.story_id)
-                // }
+                onClick={() =>
+                  addTaskToStory({
+                    description: "Task description",
+                    status: "TO_DO",
+                    priority: 1,
+                    story_id: story.story_id,
+                  })
+                }
               >
                 New Task
               </button>
