@@ -77,6 +77,16 @@ router.delete(
   }
 );
 
+router.patch(
+  "/board",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.updateBoardTitle,
+  (req, res) => {
+    return res.sendStatus(200)
+  }
+)
+
 router.get(
   "/board/:id",
   cookieController.validateSSID,
@@ -92,9 +102,9 @@ router.post(
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
   boardsController.createStory,
-  boardsController.getBoardFromUserUsingCache,
+  // boardsController.getBoardFromUserUsingCache,
   (req, res) => {
-    return res.status(200).json(res.locals.boardInfo);
+    return res.status(200).json(res.locals.createdStory);
   }
 );
 
