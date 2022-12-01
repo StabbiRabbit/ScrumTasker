@@ -16,39 +16,42 @@ function Dashboard() {
     validateSessionAndGetUserData();
   }, []);
 
+  // useEffect(() => {
+  //   fetch(`${BACKEND_URL}/api/board`, {
+  //     method: "POST",
+  //     credentials: "include",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       boards,
+  //     }),
+  //   })
+  //     .then((serverResponse) => serverResponse.json())
+  //     .then((serverResponseJson) => {
+  //       setBoards(serverResponseJson)
+  //     })
+  // },[boards])
+  
   useEffect(() => {
-    for (let i = 0; i < boards.length; i++) {
-      console.log(boards[i], "BOARDS IN FOR LOOP")
-      if (Object.hasOwn(boards[i], 'chosen')) {
-        
-        // setBoards([...boards, boards[i]])
-        console.log(boards[i], "BOARDS INSIDE IF PROPERTY")
-        break;
-      }          
-    }
-    fetch(`${BACKEND_URL}/api/moveboard`, {
-      method: "PATCH",
-      credentials: "include",
-      body: JSON.stringify({
-        boards
-      }),
-      headers: {
-        "Content-type": "application/json"
-      }
-    }).then((serverResponse) => serverResponse.json())
-      .then((serverResponseJson) => {
-        console.log(serverResponseJson)
-      })
+    updateBoard(boards)
   }, [boards])
 
-  const updateBoardTitleById = (board_id, title) => {
+  const onSortEnd = (e) => {
+    const { newIndex, oldIndex } = e
+    const newBoard = [...boards]
+    swapBoard(newBoard, oldIndex, newIndex)
+    setBoards(newBoard)
+  };
+
+  const updateBoard = (updatedBoard) => {
+    for (let i = 0; i < updatedBoard.length; i++) {
+      updatedBoard[i].index = i
+    }
     fetch(`${BACKEND_URL}/api/board`, {
       method: "PATCH",
       credentials: "include",
-      body: JSON.stringify({
-        board_id,
-        title,
-      }),
+      body: JSON.stringify(updatedBoard),
       headers: {
         "Content-type": "application/json",
       },
@@ -118,6 +121,14 @@ function Dashboard() {
       }
     });
   };
+
+  //Helper function
+  const swapBoard = (boards, oldIndex, newIndex) => {
+    const temp = boards[oldIndex]
+    boards[oldIndex] = boards[newIndex]
+    boards[newIndex] = temp
+  }
+
   return (
     <div>
       <header className="dashboard-header">
@@ -134,20 +145,20 @@ function Dashboard() {
         </button>
       </header>
       <div>
-          <ReactSortable list={boards} setList={setBoards}>
-          {boards.map((board) => (
-            <div className="dashboard-boards">
+          <ReactSortable onEnd={(e) => onSortEnd(e)} delay={1} animation={400} list={boards} setList={setBoards}>
+          {boards.map((board, index) => (
+            <div className="dashboard-boards" key={index}>
               <div className="board-element">
                 {/* <h1 className="dashboard-board-title">{board.title}</h1> */}
                 <form
                   onBlur={(e) => {
-                    const title = board.title;
-                    updateBoardTitleById(board.id, title);
+                    // const title = board.title;
+                    updateBoard(board);
                   }}
                   onSubmit={(e) => {
                     e.preventDefault();
-                    const title = board.title;
-                    updateBoardTitleById(board.id, title);
+                    // const title = board.title;
+                    updateBoard(board);
                   }}
                 >
                   <input

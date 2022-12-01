@@ -81,7 +81,7 @@ router.patch(
   "/board",
   cookieController.validateSSID,
   cookieController.blockInvalidSession,
-  boardsController.updateBoardTitle,
+  boardsController.updateBoard,
   (req, res) => {
     return res.sendStatus(200)
   }
@@ -152,15 +152,6 @@ router.delete(
   }
 );
 
-router.patch(
-  "/moveboard",
-  cookieController.validateSSID,
-  cookieController.blockInvalidSession,
-  boardsController.moveBoard,
-  (req, res) => {
-    return res.status(200).json(res.locals.boards)
-  }
-)
 //stretch feature
 // app.get("/teams", (req, res) => {
 //   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));

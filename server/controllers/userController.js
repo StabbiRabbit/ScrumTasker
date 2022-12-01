@@ -86,12 +86,20 @@ userController.getAllBoardsFromUser = async (req, res, next) => {
   dbResponse = await db.query(queryText, params);
   const boardIds = dbResponse.rows;
   const boards = [];
+  // queryTextByIndex = `SELECT title, index, _id AS id FROM board WHERE _id IN (
+  //   SELECT board_id FROM board_to_user WHERE user_id = 1) ORDER BY index ASC;`
+  // dbResponse = await db.query(queryTextByIndex);
   for (const boardId of boardIds) {
-    queryText = "SELECT title, _id AS id FROM board WHERE _id = $1";
+    queryText = "SELECT title, index, _id AS id FROM board WHERE _id = $1";
     params = [boardId.board_id];
     dbResponse = await db.query(queryText, params);
     boards.push(...dbResponse.rows);
   }
+  const compareFunction = (a,b) => {
+    if (a.index > b.index) return 1;
+    else return -1;
+  }
+  boards.sort(compareFunction)
   res.locals.boardInfo = {
     username: res.locals.username,
     boards: boards,
