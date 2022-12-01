@@ -73,19 +73,18 @@ function Board() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(storyId),
-    })
-      .then((serverResponse) => {
-        if (serverResponse.status >= 200 && serverResponse.status <= 299) {
-          const newStories = [...stories]
-          for (let i = 0; i < newStories.length; i++) {
-            if (newStories[i] === storyId) {
-              newStories.splice(i, 1);
-              break;
-            }
+    }).then((serverResponse) => {
+      if (serverResponse.status >= 200 && serverResponse.status <= 299) {
+        const newStories = [...stories];
+        for (let i = 0; i < newStories.length; i++) {
+          if (newStories[i] === storyId) {
+            newStories.splice(i, 1);
+            break;
           }
-          setStories(newStories);
         }
-      })
+        setStories(newStories);
+      }
+    });
   };
 
   const updateStoryText = (updatedStory) => {
@@ -193,10 +192,14 @@ function Board() {
                   }}
                 ></textarea>
               </form>
-              <button className="card-button"
-              onClick={() => {
-                deleteStoryById(story)
-              }}>Delete</button>
+              <button
+                className="card-button"
+                onClick={() => {
+                  deleteStoryById(story);
+                }}
+              >
+                Delete
+              </button>
               <button
                 className="card-button"
                 // onClick={() =>
@@ -207,18 +210,20 @@ function Board() {
               </button>
             </div>
           ))}
-          <button
-            onClick={() => {
-              addStoryToBoard({
-                board_id,
-                text: `New Story ${stories.length + 1}`,
-                completed: false,
-              });
-            }}
-            className="add-card-button"
-          >
-            New Story
-          </button>
+          <div className="button-container">
+            <button
+              onClick={() => {
+                addStoryToBoard({
+                  board_id,
+                  text: `New Story ${stories.length + 1}`,
+                  completed: false,
+                });
+              }}
+              className="add-card-button"
+            >
+              +
+            </button>
+          </div>
         </div>
 
         <div className="column">
