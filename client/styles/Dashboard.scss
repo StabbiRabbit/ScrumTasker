@@ -39,7 +39,7 @@ $delete-button-color: rgba(255, 0, 0, 0.75);
   border: 1px solid rgba(189, 189, 189, 0.75);
 }
 
-.dashboard-board-title {
+input.dashboard-board-title {
   color: #f5f4f3;
   font-family: "Oswald", sans-serif;
   font-size: 26px;
@@ -49,13 +49,14 @@ $delete-button-color: rgba(255, 0, 0, 0.75);
   padding: 10px;
   outline: none;
   background: none;
+  border: 1px solid rgba(0,0,0,0);
   border-radius: 10px;
   cursor: text;
   text-decoration: none;
-  border: none;
   &:focus {
     border: 1px solid gray;
   }
+  transition: 0.25s;
 }
 
 .dashboard-boards {
