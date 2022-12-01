@@ -193,16 +193,16 @@ function Board() {
         break;
       case "IN_PROCESS":
         task.status = "IN_TESTING";
-        const newTasksInprocess = [...tasksInProcess];
-        newTasksInProcess.splice(tasksInProcess.indexOf(task), 1);
-        setTasksInProcess(newTasksInProcess);
-        newTasksInTesting = [...tasksInTesting];
-        newTasksInTesting.push(task);
-        setTasksInTesting(newTasksInTesting);
+        const newTasksInProcess2 = [...tasksInProcess];
+        newTasksInProcess2.splice(tasksInProcess.indexOf(task), 1);
+        setTasksInProcess(newTasksInProcess2);
+        const newTasksInTesting2 = [...tasksInTesting];
+        newTasksInTesting2.push(task);
+        setTasksInTesting(newTasksInTesting2);
         break;
       case "IN_TESTING":
         task.status = "DONE";
-        const NewTasksInTesting = [...tasksInTesting];
+        const newTasksInTesting = [...tasksInTesting];
         newTasksInTesting.splice(tasksInTesting.indexOf(task), 1);
         setTasksInTesting(newTasksInTesting);
         const newTasksDone = [...tasksDone];
@@ -214,35 +214,35 @@ function Board() {
   }
 
   const moveLeft = (task) => {
-    // switch (task.status) {
-    //   case "IN_PROCESS":
-    //     task.status = "TO_DO";
-    //     const newTasksInProcess = [...tasksInProcess]
-    //     newTasksInProcess.splice(tasksInProcess.indexOf(task), 1);
-    //     setTasksToDo(newTasksToDo);
-    //     const newTasksToDo = [...tasksToDo];
-    //     newTasksToDo.push(task);
-    //     setTasksToDo(newTasksToDo);
-    //     break;
-    //   case "IN_TESTING":
-    //     task.status = "IN_PROCESS";
-    //     const newTasksInTesting = [...tasksInTesting]
-    //     newTasksInTesting.splice(tasksInTesting.indexOf(task), 1);
-    //     setTasksInTesting(newTasksInTesting);
-    //     const newTasksInProcess2 = [...tasksToDo];
-    //     newTasksInProcess2.push(task);
-    //     setTasksInProcess(newTasksInProcess2);
-    //     break;
-    //   case "DONE":
-    //     task.status = "IN_PROCESS";
-    //     const newTasksInTesting = [...tasksInTesting]
-    //     newTasksInTesting.splice(tasksInTesting.indexOf(task), 1);
-    //     setTasksInTesting(newTasksInTesting);
-    //     const newTasksInProcess2 = [...tasksToDo];
-    //     newTasksInProcess2.push(task);
-    //     setTasksInProcess(newTasksInProcess2);
-    //     break;
-    // }
+    switch (task.status) {
+      case "IN_PROCESS":
+        task.status = "TO_DO";
+        const newTasksInProcess = [...tasksInProcess]
+        newTasksInProcess.splice(tasksInProcess.indexOf(task), 1);
+        setTasksToDo(newTasksToDo);
+        const newTasksToDo = [...tasksToDo];
+        newTasksToDo.push(task);
+        setTasksToDo(newTasksToDo);
+        break;
+      case "IN_TESTING":
+        task.status = "IN_PROCESS";
+        const newTasksInTesting2 = [...tasksInTesting]
+        newTasksInTesting2.splice(tasksInTesting.indexOf(task), 1);
+        setTasksInTesting(newTasksInTesting2);
+        const newTasksInProcess2 = [...tasksInProcess];
+        newTasksInProcess2.push(task);
+        setTasksInProcess(newTasksInProcess2);
+        break;
+      case "DONE":
+        task.status = "IN_TESTING";
+        const newTasksDone3 = [...tasksDone]
+        newTasksDone3.splice(tasksDone.indexOf(task), 1);
+        setTasksDone(newTasksDone3);
+        const newTasksInTesting3 = [...tasksInTesting];
+        newTasksInTesting3.push(task);
+        setTasksInTesting(newTasksInTesting3);
+        break;
+    }
     return task;
   }
 
@@ -432,7 +432,9 @@ function Board() {
               >
                 Delete
               </button>
-              <button className="card-button">&lt;</button>
+              <button className="card-button"
+                onClick={() => updateTask(moveLeft(taskDone))}
+              >&lt;</button>
             </div>
           ))}
         </div>
