@@ -44,12 +44,43 @@ models.Stories = sequelize.define("stories", {
   }
 });
 
-// models.Boards = sequelize.define("boards", {
-//   title: {
+models.Boards = sequelize.define("boards", {
+  title: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  }
+});
+
+// models.Users = sequelize.define("users", {
+//   username: {
+//     type: DataTypes.TEXT,
+//     allowNull: false,
+//   },
+//   password: {
 //     type: DataTypes.TEXT,
 //     allowNull: false,
 //   }
-// })
+// });
+
+// models.boardsToUsers = sequelize.define("boardsToUsers", {
+//   board_id: {
+//     type: DataTypes.INTEGER,
+//   },
+//   user_id: {
+//     type: DataTypes.INTEGER,
+//   }
+// });
+
+// models.sessions = sequelize.define("sessions", {
+//   ssid: {
+//     type: DataTypes.INTEGER,
+//     allowNull: false,
+//   },
+//   user_id: {
+//     type: DataTypes.INTEGER,
+//     allowNull: false,
+//   }
+// });
 
 
 

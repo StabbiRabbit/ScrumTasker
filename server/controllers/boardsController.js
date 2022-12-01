@@ -1,5 +1,5 @@
 const db = require("../db.js");
-const { Stories, Tasks } = require("../models/models.js");
+const { Boards, Stories, Tasks } = require("../models/models.js");
 
 
 
@@ -108,20 +108,40 @@ boardsController.getBoardFromUserUsingCache = async (req, res, next) => {
 
 boardsController.createBoard = async (req, res, next) => {
   try {
+    // const { title } = req.body;
+    // console.log(title);
+    // let queryText =
+    //   `INSERT INTO boards (title) VALUES (${title}) RETURNING _id as board_id`;
+    // console.log(queryText);
+    // let params = [title];
+    // let dbResponse = await db.query(queryText, params);
+    // res.locals.board_id = dbResponse.rows[0].board_id;
+    // res.locals.createdBoard = {
+    //   id: dbResponse.rows[0].board_id,
+    //   title,
+    // };
+
     const { title } = req.body;
-    let queryText =
-      "INSERT INTO board (title) VALUES ($1) RETURNING _id as board_id";
-    let params = [title];
-    let dbResponse = await db.query(queryText, params);
-    res.locals.board_id = dbResponse.rows[0].board_id;
-    res.locals.createdBoard = {
-      id: dbResponse.rows[0].board_id,
-      title,
-    };
+
+    const board = await Boards.create({
+      title
+    })
+
+    res.locals.board_id = board.id;
+
+
+
     queryText =
       "INSERT INTO board_to_user (board_id, user_id) VALUES ($1, $2);";
     params = [res.locals.board_id, res.locals.user_id];
     dbResponse = await db.query(queryText, params);
+
+
+    res.locals.createdBoard = {
+      id: board.id,
+      title: board.title,
+    }
+    // res.sendStatus(200);
     return next();
   } catch (error) {
     return next({
@@ -145,22 +165,33 @@ boardsController.createStory = async (req, res, next) => {
     //   "INSERT INTO story_to_board (story_id, board_id) VALUES ($1, $2);";
     // params = [dbResponse.rows[0]._id, board_id];
     // dbResponse = await db.query(queryText, params);
-    res.locals.createdStory = {
-      story_id: res.locals.story_id,
-      text,
-      completed,
-    }
+
+    // res.locals.createdStory = {
+    //   story_id: res.locals.story_id,
+    //   text,
+    //   completed,
+    // }
+
+    // Creating a new instance of Story with sequelize
     const { text, completed, board_id } = req.body;
     const story = await Stories.create(
       {
         text,
         completed,
-        board_id: 2
-
+        board_id
       }
     );
-    res.sendStatus(200);
-    // return next();
+
+    // Created story presists in the middleware chain
+    res.locals.createdStory = {
+      story_id: res.locals.story_id,
+      text: story.text,
+      completed: story.completed,
+      board_id: board_id,
+    }
+
+    return next();
+
   } catch (error) {
     return next({
       log: "Error creating a story",
@@ -197,20 +228,26 @@ boardsController.createTask = async (req, res, next) => {
 
     // const { description, status, priority, story_id } = req.body;
 
-    const { description, status, priority } = req.body
-    // Sequelized Queries and Creation
+    const { description, status, priority, story_id } = req.body
+    // Creating a new task with sequelize
     const task = await Tasks.create(
       {
         description: description,
         status: status,
         priority: priority,
-        story_id: 7
+        story_id: story_id
       }
     );
 
-    // console.log(task);
-    res.sendStatus(200);
-    // return next();
+    // Passing task info back to the client via res.locals
+    res.locals.createdTask = {
+      description,
+      status,
+      priority,
+      story_id,
+    }
+
+    return next();
   } catch (error) {
     console.log(error);
     return next({

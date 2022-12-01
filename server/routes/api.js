@@ -115,7 +115,7 @@ router.post(
   boardsController.createTask,
   boardsController.getBoardFromUserUsingCache,
   (req, res) => {
-    return res.status(200).json(res.locals.boardInfo);
+    return res.status(200).json(res.locals.createdTask);
   }
 );
 

@@ -23,6 +23,7 @@ userController.createUser = async (req, res, next) => {
   bcrypt.hash(password, SALT_WORK_FACTOR).then((hashedPass) => {
     const queryText = "INSERT INTO users (username, password) VALUES ($1, $2);";
     const values = [username, hashedPass];
+    console.log(queryText);
     db.query(queryText, values)
       .then((result) => {
         res.locals.createdUser = true;
