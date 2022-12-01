@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 import "../styles/Dashboard.scss";
 
 const { BACKEND_URL } = process.env;
