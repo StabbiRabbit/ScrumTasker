@@ -127,7 +127,7 @@ function Board() {
         switch (taskToBeDeleted.status) {
           case "TO_DO":
             const newTasksToDo = [...tasksToDo];
-            newTasksToDo.splice(tasksToDo.indexOf(taskToBeDeleted), 1);
+            newTasksToDo.splice(newTasksToDo.indexOf(taskToBeDeleted), 1);
             setTasksToDo(newTasksToDo);
             break;
           case "IN_PROCESS":
@@ -179,6 +179,72 @@ function Board() {
       body: JSON.stringify(updatedTask),
     });
   };
+
+  const moveRight = (task) => {
+    switch (task.status) {
+      case "TO_DO":
+        task.status = "IN_PROCESS";
+        const newTasksToDo = [...tasksToDo]
+        newTasksToDo.splice(tasksToDo.indexOf(task), 1);
+        setTasksToDo(newTasksToDo);
+        const newTasksInProcess = [...tasksInProcess];
+        newTasksInProcess.push(task);
+        setTasksInProcess(newTasksInProcess);
+        break;
+      case "IN_PROCESS":
+        task.status = "IN_TESTING";
+        const newTasksInprocess = [...tasksInProcess];
+        newTasksInProcess.splice(tasksInProcess.indexOf(task), 1);
+        setTasksInProcess(newTasksInProcess);
+        newTasksInTesting = [...tasksInTesting];
+        newTasksInTesting.push(task);
+        setTasksInTesting(newTasksInTesting);
+        break;
+      case "IN_TESTING":
+        task.status = "DONE";
+        const NewTasksInTesting = [...tasksInTesting];
+        newTasksInTesting.splice(tasksInTesting.indexOf(task), 1);
+        setTasksInTesting(newTasksInTesting);
+        const newTasksDone = [...tasksDone];
+        newTasksDone.push(task);
+        setTasksDone(newTasksDone);
+        break;
+    }
+    return task;
+  }
+
+  const moveLeft = (task) => {
+    // switch (task.status) {
+    //   case "IN_PROCESS":
+    //     task.status = "TO_DO";
+    //     const newTasksInProcess = [...tasksInProcess]
+    //     newTasksInProcess.splice(tasksInProcess.indexOf(task), 1);
+    //     setTasksToDo(newTasksToDo);
+    //     const newTasksToDo = [...tasksToDo];
+    //     newTasksToDo.push(task);
+    //     setTasksToDo(newTasksToDo);
+    //     break;
+    //   case "IN_TESTING":
+    //     task.status = "IN_PROCESS";
+    //     const newTasksInTesting = [...tasksInTesting]
+    //     newTasksInTesting.splice(tasksInTesting.indexOf(task), 1);
+    //     setTasksInTesting(newTasksInTesting);
+    //     const newTasksInProcess2 = [...tasksToDo];
+    //     newTasksInProcess2.push(task);
+    //     setTasksInProcess(newTasksInProcess2);
+    //     break;
+    //   case "DONE":
+    //     task.status = "IN_PROCESS";
+    //     const newTasksInTesting = [...tasksInTesting]
+    //     newTasksInTesting.splice(tasksInTesting.indexOf(task), 1);
+    //     setTasksInTesting(newTasksInTesting);
+    //     const newTasksInProcess2 = [...tasksToDo];
+    //     newTasksInProcess2.push(task);
+    //     setTasksInProcess(newTasksInProcess2);
+    //     break;
+    // }
+    return task;
+  }
 
   return (
     <div>
@@ -265,7 +331,8 @@ function Board() {
               >
                 Delete
               </button>
-              <button className="card-button">&gt;</button>
+              <button className="card-button"
+              onClick={() => updateTask(moveRight(taskToDo))}>&gt;</button>
             </div>
           ))}
         </div>
@@ -295,8 +362,12 @@ function Board() {
               >
                 Delete
               </button>
-              {/* <button className="card-button">&lt;</button> */}
-              <button className="card-button">&gt;</button>
+              <button className="card-button"
+                onClick={() => updateTask(moveLeft(taskInProcess))}
+              >&lt;</button>
+              <button className="card-button"
+                onClick={() => updateTask(moveRight(taskInProcess))}
+              >&gt;</button>
             </div>
           ))}
         </div>
@@ -326,8 +397,12 @@ function Board() {
               >
                 Delete
               </button>
-              {/* <button className="card-button">&lt;</button> */}
-              <button className="card-button">&gt;</button>
+              <button className="card-button"
+                onClick={() => updateTask(moveLeft(taskInTesting))}
+              >&lt;</button>
+              <button className="card-button"
+                onClick={() => updateTask(moveRight(taskInTesting))}
+              >&gt;</button>
             </div>
           ))}
         </div>
