@@ -123,7 +123,6 @@ boardsController.createStory = async (req, res, next) => {
       "INSERT INTO story (text, completed) VALUES ($1, $2) RETURNING _id;";
     let params = [text, completed];
     let dbResponse = await db.query(queryText, params);
-    console.log("\n   checkpoint\n");
     res.locals.story_id = dbResponse.rows[0]._id;
     res.locals.board_id = board_id;
     queryText =
@@ -222,24 +221,19 @@ boardsController.deleteStory = async (req, res, next) => {
 boardsController.deleteTask = async (req, res, next) => {
   try {
     const { task_id } = req.body;
-
     let queryText = "SELECT story_id FROM task_to_story WHERE task_id = $1";
     let params = [task_id];
     let dbResponse = await db.query(queryText, params);
-
     queryText = "SELECT board_id FROM story_to_board WHERE story_id = $1";
     params = [dbResponse.rows[0].story_id];
     dbResponse = await db.query(queryText, params);
     res.locals.board_id = dbResponse.rows[0].board_id;
-
     queryText = "DELETE FROM task WHERE _id = $1";
     params = [task_id];
     dbResponse = await db.query(queryText, params);
-
     queryText = "DELETE FROM task_to_story WHERE task_id = $1";
     params = [task_id];
     dbResponse = await db.query(queryText, params);
-
     return next();
   } catch (error) {
     return next({
@@ -288,7 +282,6 @@ boardsController.updateTask = async (req, res, next) => {
     let queryText =
       "UPDATE task SET description = $1, status = $2, priority = $3 WHERE _id = $4";
     let params = [description, status, priority, task_id];
-    console.log("CHECKPOINT");
     let dbResponse = await db.query(queryText, params);
     return next();
   } catch (error) {

@@ -165,15 +165,7 @@ function Board() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updatedStory),
-    }).then((serverResponse) => {
-      // The client should expect to receive status code, only, from the server
-      // Based on the status code from the server, update the piece of state and re-render
-      if (serverResponse.status >= 200 && serverResponse.status <= 299) {
-        const newStories = [...stories];
-        newStories[stories.indexOf(updatedStory)] = updatedStory;
-        setStories(newStories);
-      }
-    });
+    })
   };
 
   const updateTask = (updatedTask) => {
@@ -185,31 +177,13 @@ function Board() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updatedTask),
-    }).then((serverResponse) => {
-      // The client should expect to receive status code, only, from the server
-      // Based on the status code from the server, update the piece of state and re-render
-      if (serverResponse.status >= 200 && serverResponse.status <= 299) {
-        switch (updatedTask.status) {
-          case "TO_DO":
-            setTasksToDo((tasksToDo) => [...tasksToDo, updatedTask]);
-            break;
-          case "IN_PROCESS":
-            setTasksInProcess([...tasksInProcess, updatedTask]);
-            break;
-          case "IN_TESTING":
-            setTasksInTesting([...tasksInTesting, updatedTask]);
-            break;
-          case "DONE":
-            setTasksDone([...tasksDone, updatedTask]);
-            break;
-        }
-      }
     });
   };
 
   return (
     <div>
       <body className="cards-container">
+        
         <div className="column">
           <h1 className="board-heading">Stories</h1>
           {stories.map((story) => (
@@ -291,7 +265,6 @@ function Board() {
               >
                 Delete
               </button>
-              {/* <button className="card-button">&lt;</button> */}
               <button className="card-button">&gt;</button>
             </div>
           ))}
@@ -301,9 +274,28 @@ function Board() {
           <h1 className="board-heading">In Process</h1>
           {tasksInProcess.map((taskInProcess) => (
             <div className="cards">
-              <h2>{taskInProcess.description}</h2>
-              <button className="card-button">Delete</button>
-              <button className="card-button">&lt;</button>
+              <textarea
+                className="updateable-title"
+                onChange={(event) => {
+                  const newTasksInProcess = [...tasksInProcess];
+                  newTasksInProcess[tasksInProcess.indexOf(taskInProcess)].description =
+                    event.target.value;
+                  setTasksInProcess(newTasksInProcess);
+                  event.target.style.height = event.target.scrollHeight + "px";
+                }}
+                onBlur={() => {
+                  updateTask(taskInProcess);
+                }}
+              >
+                {taskInProcess.description}
+              </textarea>
+              <button
+                className="card-button"
+                onClick={() => deleteTask(taskInProcess)}
+              >
+                Delete
+              </button>
+              {/* <button className="card-button">&lt;</button> */}
               <button className="card-button">&gt;</button>
             </div>
           ))}
@@ -311,11 +303,30 @@ function Board() {
 
         <div className="column">
           <h1 className="board-heading">In Testing</h1>
-          {tasksInTesting.map((board) => (
+          {tasksInTesting.map((taskInTesting) => (
             <div className="cards">
-              <h2>{board.description}</h2>
-              <button className="card-button">Delete</button>
-              <button className="card-button">&lt;</button>
+              <textarea
+                className="updateable-title"
+                onChange={(event) => {
+                  const newTasksInTesting = [...tasksInTesting];
+                  newTasksInTesting[tasksInTesting.indexOf(taskInTesting)].description =
+                    event.target.value;
+                  setTasksInTesting(newTasksInTesting);
+                  event.target.style.height = event.target.scrollHeight + "px";
+                }}
+                onBlur={() => {
+                  updateTask(taskInTesting);
+                }}
+              >
+                {taskInTesting.description}
+              </textarea>
+              <button
+                className="card-button"
+                onClick={() => deleteTask(taskInTesting)}
+              >
+                Delete
+              </button>
+              {/* <button className="card-button">&lt;</button> */}
               <button className="card-button">&gt;</button>
             </div>
           ))}
@@ -323,15 +334,34 @@ function Board() {
 
         <div className="column">
           <h1 className="board-heading">Done</h1>
-          {tasksDone.map((board) => (
+          {tasksDone.map((taskDone) => (
             <div className="cards">
-              <h2>{board.description}</h2>
-              <button className="card-button">Delete</button>
+              <textarea
+                className="updateable-title"
+                onChange={(event) => {
+                  const newTasksDone = [...tasksDone];
+                  newTasksDone[tasksDone.indexOf(taskDone)].description =
+                    event.target.value;
+                  setTasksDone(newTasksDone);
+                  event.target.style.height = event.target.scrollHeight + "px";
+                }}
+                onBlur={() => {
+                  updateTask(taskDone);
+                }}
+              >
+                {taskDone.description}
+              </textarea>
+              <button
+                className="card-button"
+                onClick={() => deleteTask(taskDone)}
+              >
+                Delete
+              </button>
               <button className="card-button">&lt;</button>
-              <button className="card-button">Done</button>
             </div>
           ))}
         </div>
+        
       </body>
     </div>
   );

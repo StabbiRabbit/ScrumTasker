@@ -135,7 +135,7 @@ router.patch(
   cookieController.blockInvalidSession,
   boardsController.updateTask,
   (req, res) => {
-    return res.status(200).json(res.locals.createdTask);
+    return res.sendStatus(200);
   }
 );
 
