@@ -49,8 +49,7 @@ function Board() {
 
   const addStoryToBoard = (text, completed) => {
     // setStories((oldArray) => [...oldArray, { title: "new title" }]);
-    const board_id = 
-    fetch(`${BACKEND_URL}/api/story`, {
+    const board_id = fetch(`${BACKEND_URL}/api/story`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -124,7 +123,23 @@ function Board() {
           <h1 className="board-heading">Stories</h1>
           {stories.map((story) => (
             <div className="cards">
-              <h2>{story.text}</h2>
+              <form>
+                <textarea 
+                className="textarea"
+                value={story.text}
+                onChange={(event) => {
+                  const newStories = [...stories];
+                    for (let i = 0; i < newStories.length; i++) {
+                      let newStory = Object.assign({}, newStories[i]);
+                      if (newStory.story_id === story.story_id) {
+                        newStory.text = event.target.value;
+                      }
+                      newStories[i] = newStory;
+                    }
+                    setStories([...newStories]);
+                    event.target.style.height = event.target.scrollHeight + 'px';
+                }}></textarea>
+              </form>
               <p>{story.description}</p>
               <button className="card-button">Delete</button>
               <button
