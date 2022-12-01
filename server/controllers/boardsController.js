@@ -272,11 +272,10 @@ boardsController.deleteTask = async (req, res, next) => {
 boardsController.updateBoardTitle = async (req, res, next) => {
   try {
     const { board_id, title } = req.body;
-    console.log(req.body);
-    console.log(board_id, title);
     let queryText = "UPDATE board SET title = $1 WHERE _id = $2";
     let params = [title, board_id];
     let dbResponse = await db.query(queryText, params);
+    return next();
   } catch (error) {
     return next({
       log: "boardController.updateBoardTitle",
