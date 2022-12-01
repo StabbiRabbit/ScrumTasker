@@ -69,4 +69,17 @@ cookieController.blockInvalidSession = (req, res, next) => {
   return next();
 };
 
+// cookieController.adminOverride = async (req, res, next) => {
+//   let queryText =
+//       "SELECT sessions.ssid, sessions.user_id, users.username FROM sessions JOIN users ON users._id = sessions.user_id WHERE sessions.ssid = $1;";
+//   let params = [req.cookies.ssid];
+//   const dbResponse = await db.query(queryText, params);
+//   if (dbResponse.rows.length === 1) {
+//     // Persist user information through res.locals for later middleware
+//     res.locals.username = dbResponse.rows[0].username;
+//     res.locals.user_id = dbResponse.rows[0].user_id;
+//     res.locals.ssidIsValid = dbResponse.rows.length === 1;
+//   }
+// }
+
 module.exports = cookieController;

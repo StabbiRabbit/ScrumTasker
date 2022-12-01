@@ -88,7 +88,7 @@ userController.getAllBoardsFromUser = async (req, res, next) => {
   const boardIds = dbResponse.rows;
   const boards = [];
   for (const boardId of boardIds) {
-    queryText = "SELECT title, _id AS id FROM board WHERE _id = $1";
+    queryText = "SELECT title, _id AS id FROM boards WHERE _id = $1";
     params = [boardId.board_id];
     dbResponse = await db.query(queryText, params);
     boards.push(...dbResponse.rows);

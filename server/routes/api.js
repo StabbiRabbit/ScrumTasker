@@ -47,7 +47,7 @@ router.post(
 router.get(
   "/dashboard",
   cookieController.validateSSID,
-  cookieController.blockInvalidSession,
+  // cookieController.blockInvalidSession,
   userController.getAllBoardsFromUser,
   (req, res) => {
     if (res.locals.ssidIsValid) res.status(200).json(res.locals.boardInfo);
@@ -58,7 +58,7 @@ router.get(
 router.post(
   "/board",
   cookieController.validateSSID,
-  cookieController.blockInvalidSession,
+  // cookieController.blockInvalidSession,
   boardsController.createBoard,
   // userController.getAllBoardsFromUser,
   (req, res) => {
@@ -69,7 +69,7 @@ router.post(
 router.delete(
   "/board",
   cookieController.validateSSID,
-  cookieController.blockInvalidSession,
+  // cookieController.blockInvalidSession,
   boardsController.deleteBoard,
   (req, res) => {
     if (res.locals.ssidIsValid) res.sendStatus(200);
@@ -80,7 +80,7 @@ router.delete(
 router.patch(
   "/board",
   cookieController.validateSSID,
-  cookieController.blockInvalidSession,
+  // cookieController.blockInvalidSession,
   boardsController.updateBoardTitle,
   (req, res) => {
     return res.sendStatus(200)
@@ -90,7 +90,7 @@ router.patch(
 router.get(
   "/board/:id",
   cookieController.validateSSID,
-  cookieController.blockInvalidSession,
+  // cookieController.blockInvalidSession,
   boardsController.getBoardFromUser,
   (req, res) => {
     return res.status(200).json(res.locals.boardInfo);
@@ -122,7 +122,7 @@ router.post(
 router.delete(
   "/board",
   cookieController.validateSSID,
-  cookieController.blockInvalidSession,
+  // cookieController.blockInvalidSession,
   boardsController.deleteBoard,
   userController.getAllBoardsFromUser,
   (req, res) => {
@@ -133,7 +133,7 @@ router.delete(
 router.delete(
   "/story",
   cookieController.validateSSID,
-  cookieController.blockInvalidSession,
+  // cookieController.blockInvalidSession,
   boardsController.deleteStory,
   boardsController.getBoardFromUserUsingCache,
   (req, res) => {
@@ -144,7 +144,7 @@ router.delete(
 router.delete(
   "/task",
   cookieController.validateSSID,
-  cookieController.blockInvalidSession,
+  // cookieController.blockInvalidSession,
   boardsController.deleteTask,
   boardsController.getBoardFromUserUsingCache,
   (req, res) => {
