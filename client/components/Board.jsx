@@ -242,12 +242,7 @@ function Board() {
                   event.target.style.height = event.target.scrollHeight + "px";
                 }}
                 onBlur={() => {
-                  updateTask({
-                    description: taskToDo.description,
-                    priority: taskToDo.priority,
-                    status: taskToDo.status,
-                    task_id: taskToDo.task_id,
-                  });
+                  updateTask(taskToDo);
                 }}
               >
                 {taskToDo.description}
