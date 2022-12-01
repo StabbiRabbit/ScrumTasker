@@ -282,4 +282,22 @@ boardsController.updateStory = async (req, res, next) => {
   }
 };
 
+boardsController.updateTask = async (req, res, next) => {
+  try {
+    const { task_id, description, status, priority } = req.body;
+    let queryText =
+      "UPDATE task SET description = $1, status = $2, priority = $3 WHERE _id = $4";
+    let params = [description, status, priority, task_id];
+    console.log("CHECKPOINT");
+    let dbResponse = await db.query(queryText, params);
+    return next();
+  } catch (error) {
+    return next({
+      log: "boardsController.updateTask",
+      status: 500,
+      message: { err: "Unable to update the task" },
+    });
+  }
+};
+
 module.exports = boardsController;

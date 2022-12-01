@@ -129,6 +129,16 @@ router.post(
   }
 );
 
+router.patch(
+  "/task",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.updateTask,
+  (req, res) => {
+    return res.status(200).json(res.locals.createdTask);
+  }
+);
+
 router.delete(
   "/board",
   cookieController.validateSSID,

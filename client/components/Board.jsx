@@ -87,7 +87,7 @@ function Board() {
     });
   };
 
-  const updateStoryText = (updatedStory) => {
+  const updateStory = (updatedStory) => {
     // updatedStory is an object containing the updated story properties
     fetch(`${BACKEND_URL}/api/story`, {
       method: "PATCH",
@@ -111,6 +111,37 @@ function Board() {
     });
   };
 
+  const updateTask = (updatedTask) => {
+    // updatedStory is an object containing the updated story properties
+    fetch(`${BACKEND_URL}/api/task`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedTask),
+    }).then((serverResponse) => {
+      // The client should expect to receive status code, only, from the server
+      // Based on the status code from the server, update the piece of state and re-render
+      if (serverResponse.status >= 200 && serverResponse.status <= 299) {
+        switch (updatedTask.status) {
+          case "TO_DO":
+            setTasksToDo((tasksToDo) => [...tasksToDo, updatedTask]);
+            break;
+          case "IN_PROCESS":
+            setTasksInProcess([...tasksInProcess, updatedTask]);
+            break;
+          case "IN_TESTING":
+            setTasksInTesting([...tasksInTesting, updatedTask]);
+            break;
+          case "DONE":
+            setTasksDone([...tasksDone, updatedTask]);
+            break;
+        }
+      }
+    });
+  };
+
   const addTaskToStory = (newTask) => {
     fetch(`${BACKEND_URL}/api/task`, {
       method: "POST",
@@ -122,11 +153,10 @@ function Board() {
     })
       .then((serverResponse) => {
         // if (response.status >= 200 && response.status <= 299)
-          return serverResponse.json();
+        return serverResponse.json();
       })
       .then((serverResponseJson) => {
         const createdTask = serverResponseJson;
-        console.log(createdTask);
         switch (createdTask.status) {
           case "TO_DO":
             setTasksToDo((tasksToDo) => [...tasksToDo, createdTask]);
@@ -169,11 +199,11 @@ function Board() {
                       event.target.scrollHeight + "px";
                   }}
                   onBlur={(event) => {
-                    updateStoryText(story);
+                    updateStory(story);
                   }}
                   onSubmit={(event) => {
                     event.preventDefault();
-                    updateStoryText(story);
+                    updateStory(story);
                   }}
                 ></textarea>
               </form>
@@ -220,7 +250,31 @@ function Board() {
           <h1 className="board-heading">To Do</h1>
           {tasksToDo.map((taskToDo) => (
             <div className="cards">
-              <textarea className="updateable-title">{taskToDo.description}</textarea>
+              <textarea
+                className="updateable-title"
+                onChange={(event) => {
+                  const newTasksToDo = [...tasksToDo];
+                  for (let i = 0; i < newTasksToDo.length; i++) {
+                    let newTaskToDo = Object.assign({}, tasksToDo[i]);
+                    if (newTaskToDo.task_id === taskToDo.task_id) {
+                      newTaskToDo.description = event.target.value;
+                    }
+                    newTasksToDo[i] = newTaskToDo;
+                  }
+                  setTasksToDo(newTasksToDo);
+                  event.target.style.height = event.target.scrollHeight + "px";
+                }}
+                onBlur={() => {
+                  updateTask({
+                    description: taskToDo.description,
+                    priority: taskToDo.priority,
+                    status: taskToDo.status,
+                    task_id: taskToDo.task_id,
+                  });
+                }}
+              >
+                {taskToDo.description}
+              </textarea>
               <button className="card-button">Delete</button>
               {/* <button className="card-button">&lt;</button> */}
               <button className="card-button">&gt;</button>
@@ -264,7 +318,6 @@ function Board() {
           ))}
         </div>
       </body>
-
     </div>
   );
 }
