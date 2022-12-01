@@ -65,23 +65,18 @@ function Board() {
       });
   };
 
-  const deleteStoryById = (storyId) => {
+  const deleteStory = (story) => {
     fetch(`${BACKEND_URL}/api/story`, {
       method: "DELETE",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(storyId),
+      body: JSON.stringify(story),
     }).then((serverResponse) => {
       if (serverResponse.status >= 200 && serverResponse.status <= 299) {
         const newStories = [...stories];
-        for (let i = 0; i < newStories.length; i++) {
-          if (newStories[i] === storyId) {
-            newStories.splice(i, 1);
-            break;
-          }
-        }
+        newStories.splice([stories.indexOf(story)], 1);
         setStories(newStories);
       }
     });
@@ -210,7 +205,7 @@ function Board() {
               <button
                 className="card-button"
                 onClick={() => {
-                  deleteStoryById(story);
+                  deleteStory(story);
                 }}
               >
                 Delete
