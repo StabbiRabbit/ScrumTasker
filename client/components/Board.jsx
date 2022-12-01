@@ -6,7 +6,7 @@ const { BACKEND_URL } = process.env;
 
 function Board() {
   const board_id = useParams().id;
-  const [board, setBoard] = useState([]);
+  // const [board, setBoard] = useState([]);
   const [stories, setStories] = useState([]);
   const [tasksToDo, setTasksToDo] = useState([]);
   const [tasksInProcess, setTasksInProcess] = useState([]);
@@ -29,16 +29,16 @@ function Board() {
         task.story_id = story.story_id;
         switch (task.status) {
           case "TO_DO":
-            setTasksToDo((toDo) => [...toDo, task]);
+            setTasksToDo((tasksToDo) => [...tasksToDo, task]);
             break;
           case "IN_PROCESS":
-            setTasksInProcess((process) => [...process, task]);
+            setTasksInProcess((tasksInProcess) => [...tasksInProcess, task]);
             break;
           case "IN_TESTING":
-            setTasksInTesting((testing) => [...testing, task]);
+            setTasksInTesting((tasksInTesting) => [...tasksInTesting, task]);
             break;
           case "DONE":
-            setTasksDone((done) => [...done, task]);
+            setTasksDone((tasksDone) => [...tasksDone, task]);
             break;
           default:
             break;
@@ -121,41 +121,31 @@ function Board() {
       body: JSON.stringify(newTask),
     })
       .then((serverResponse) => {
-        return serverResponse.json();
+        // if (response.status >= 200 && response.status <= 299)
+          return serverResponse.json();
       })
       .then((serverResponseJson) => {
-        setStories(serverResponseJson.stories);
-        setTasksToDo();
-        for (const story of serverResponseJson.stories) {
-          setTodo([...tasksToDo, story.tasks]);
-          // for (const task of story.tasks) {
-          //   task.story_id = story.story_id;
-          //   switch (task.status) {
-          //     case "TO_DO":
-          //       setToDo(task)
-          //       break;
-          //     case "IN_PROCESS":
-          //       setProcess((process) => [...process, task])
-          //       break;
-          //     case "IN_TESTING":
-          //       setTesting((testing) => [...testing, task])
-          //       break;
-          //     case "DONE":
-          //       setDone((done) => [...done, task])
-          //       break;
-          //     default:
-          //       break;
-          //   }
-          // }
+        const createdTask = serverResponseJson;
+        console.log(createdTask);
+        switch (createdTask.status) {
+          case "TO_DO":
+            setTasksToDo((tasksToDo) => [...tasksToDo, createdTask]);
+            break;
+          case "IN_PROCESS":
+            setTasksInProcess([...tasksInProcess, createdTask]);
+            break;
+          case "IN_TESTING":
+            setTasksInTesting([...tasksInTesting, createdTask]);
+            break;
+          case "DONE":
+            setTasksDone([...tasksDone, createdTask]);
+            break;
         }
       });
   };
 
   return (
     <div>
-      {/* should have username on left top */}
-
-      {/* should have functionality of creating new boad */}
       <body className="cards-container">
         <div className="column">
           <h1 className="board-heading">Stories</h1>
@@ -163,7 +153,7 @@ function Board() {
             <div className="cards">
               <form>
                 <textarea
-                  className="textarea"
+                  className="updateable-title story"
                   value={story.text}
                   onChange={(event) => {
                     const newStories = [...stories];
@@ -228,9 +218,9 @@ function Board() {
 
         <div className="column">
           <h1 className="board-heading">To Do</h1>
-          {tasksToDo.map((board) => (
+          {tasksToDo.map((taskToDo) => (
             <div className="cards">
-              <h2>{board.desc}</h2>
+              <textarea className="updateable-title">{taskToDo.description}</textarea>
               <button className="card-button">Delete</button>
               {/* <button className="card-button">&lt;</button> */}
               <button className="card-button">&gt;</button>
@@ -240,9 +230,9 @@ function Board() {
 
         <div className="column">
           <h1 className="board-heading">In Process</h1>
-          {tasksInProcess.map((board) => (
+          {tasksInProcess.map((taskInProcess) => (
             <div className="cards">
-              <h2>{board.desc}</h2>
+              <h2>{taskInProcess.description}</h2>
               <button className="card-button">Delete</button>
               <button className="card-button">&lt;</button>
               <button className="card-button">&gt;</button>
@@ -254,7 +244,7 @@ function Board() {
           <h1 className="board-heading">In Testing</h1>
           {tasksInTesting.map((board) => (
             <div className="cards">
-              <h2>{board.desc}</h2>
+              <h2>{board.description}</h2>
               <button className="card-button">Delete</button>
               <button className="card-button">&lt;</button>
               <button className="card-button">&gt;</button>
@@ -266,7 +256,7 @@ function Board() {
           <h1 className="board-heading">Done</h1>
           {tasksDone.map((board) => (
             <div className="cards">
-              <h2>{board.desc}</h2>
+              <h2>{board.description}</h2>
               <button className="card-button">Delete</button>
               <button className="card-button">&lt;</button>
               <button className="card-button">Done</button>
@@ -275,12 +265,6 @@ function Board() {
         </div>
       </body>
 
-      {board.map((board) => (
-        <div key={board.id}>
-          <h2>{board.name}</h2>
-          <p>{board.description}</p>
-        </div>
-      ))}
     </div>
   );
 }

@@ -30,7 +30,7 @@ boardsController.getBoardFromUser = async (req, res, next) => {
         "SELECT description, status, priority, _id AS task_id FROM task WHERE _id = $1";
       params = [taskItem.task_id];
       dbResponse = await db.query(queryText, params);
-      taskItem.desc = dbResponse.rows[0].description;
+      taskItem.description = dbResponse.rows[0].description;
       taskItem.status = dbResponse.rows[0].status;
       taskItem.priority = dbResponse.rows[0].priority;
       taskItem.task_id = dbResponse.rows[0].task_id;
@@ -152,7 +152,13 @@ boardsController.createTask = async (req, res, next) => {
       "INSERT INTO task (description, status, priority) VALUES ($1, $2, $3) RETURNING _id;";
     let params = [description, status, priority];
     let dbResponse = await db.query(queryText, params);
-    res.locals.task_id = dbResponse.rows[0]._id;
+    res.locals.createdTask = {
+      description,
+      priority,
+      status,
+      story_id,
+      task_id: dbResponse.rows[0]._id,
+    };
     queryText =
       "INSERT INTO task_to_story (task_id, story_id) VALUES ($1, $2);";
     params = [dbResponse.rows[0]._id, story_id];

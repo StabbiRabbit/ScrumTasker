@@ -58,8 +58,8 @@
   .add-card-button {
     text-align: center;
     text-justify: center;
-    height: 48px;
-    width: 48px;
+    height: 40px;
+    width: 40px;
     font-size: 24px;
     background: rgba(46, 46, 48, 0.75);
     color: rgba(97, 96, 96, 0.75);
@@ -89,18 +89,20 @@
   justify-content: center;
 }
 
-.textarea {
+.updateable-title {
   outline: none;
   background: none;
   font-family: Arial;
-  font-size: 20px;
   font-weight: 600;
   width: 100%;
   color: white;
   resize: none;
   overflow: hidden;
-  padding: 10;
+  padding: 10px;
   border: 1px solid rgba(0,0,0,0);
+  &.story {
+    font-size: max(16px, 1.5vw);
+  }
   border-radius: 10px;
   &:hover, &:focus {
     border: 1px solid gray;
