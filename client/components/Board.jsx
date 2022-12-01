@@ -114,6 +114,48 @@ function Board() {
     });
   };
 
+  const deleteTask = (taskToBeDeleted) => {
+    fetch(`${BACKEND_URL}/api/task`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(taskToBeDeleted),
+    }).then((serverResponse) => {
+      if (serverResponse.status >= 200 && serverResponse.status <= 299) {
+        switch (taskToBeDeleted.status) {
+          case "TO_DO":
+            const newTasksToDo = [...tasksToDo];
+            newTasksToDo.splice(tasksToDo.indexOf(taskToBeDeleted), 1);
+            setTasksToDo(newTasksToDo);
+            break;
+          case "IN_PROCESS":
+            const newTasksInProcess = [...tasksInProcess];
+            newTasksInProcess.splice(
+              tasksInProcess.indexOf(taskToBeDeleted),
+              1
+            );
+            setTasksInProcess(newTasksInProcess);
+            break;
+          case "IN_TESTING":
+            const newTasksInTesting = [...tasksInTesting];
+            newTasksInTesting.splice(
+              tasksInTesting.indexOf(taskToBeDeleted),
+              1
+            );
+            setTasksInTesting(newTasksInTesting);
+            break;
+          case "DONE":
+            newTasksDone = [...tasksDone];
+            newTasksDone.splice(tasksDone.indexOf(taskToBeDeleted), 1);
+            setTasksDone(newTasksDone);
+            break;
+        }
+      }
+    });
+  };
+
   const updateStory = (updatedStory) => {
     // updatedStory is an object containing the updated story properties
     fetch(`${BACKEND_URL}/api/story`, {
@@ -128,11 +170,7 @@ function Board() {
       // Based on the status code from the server, update the piece of state and re-render
       if (serverResponse.status >= 200 && serverResponse.status <= 299) {
         const newStories = [...stories];
-        for (let i = 0; i < newStories.length; i++) {
-          if (newStories[i].story_id === updatedStory.story_id) {
-            newStories[i] = updatedStory;
-          }
-        }
+        newStories[stories.indexOf(updatedStory)] = updatedStory;
         setStories(newStories);
       }
     });
@@ -247,7 +285,12 @@ function Board() {
               >
                 {taskToDo.description}
               </textarea>
-              <button className="card-button">Delete</button>
+              <button
+                className="card-button"
+                onClick={() => deleteTask(taskToDo)}
+              >
+                Delete
+              </button>
               {/* <button className="card-button">&lt;</button> */}
               <button className="card-button">&gt;</button>
             </div>
