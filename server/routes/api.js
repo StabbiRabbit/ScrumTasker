@@ -24,7 +24,7 @@ router.post(
 
 router.get("/login", cookieController.validateSSID, (req, res) => {
   if (res.locals.ssidIsValid) res.status(200).json(res.locals.boardInfo);
-  else res.status(501).sendStatus("Invalid SSID");
+  else res.status(501).send("Invalid SSID");
 });
 
 router.post(

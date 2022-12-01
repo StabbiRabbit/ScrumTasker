@@ -97,6 +97,10 @@ userController.getAllBoardsFromUser = async (req, res, next) => {
     username: res.locals.username,
     boards: boards,
   };
+  // return next();
+  res.locals.ssidIsValid = true;
+  console.log('res.locals obj ', res.locals);
+  // res.sendStatus(200);
   return next();
 };
 
