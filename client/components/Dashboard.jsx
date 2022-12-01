@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.scss";
 
 const { BACKEND_URL } = process.env;
@@ -133,7 +133,7 @@ function Dashboard() {
           Create +
         </button>
       </header>
-        <div>
+      <div>
           <ReactSortable list={boards} setList={setBoards}>
           {boards.map((board) => (
             <div className="dashboard-boards">

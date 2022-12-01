@@ -12,7 +12,7 @@
 
 .cards {
   margin: 15px 10px;
-  padding: 10 10 20 30;
+  padding: 10px 10px;
   background: rgba(46, 46, 48, 0.75);
   border-radius: 10px;
   border: 0.6px solid rgba(97, 96, 96, 0.75);
@@ -75,10 +75,28 @@
 }
 .board-heading {
   text-align: center;
+  margin: auto;
   color: #f5f4f3;
   font-family: 'Oswald', sans-serif;
 }
 
 .column {
   flex: 1;
+}
+
+.textarea {
+  outline: none;
+  background: none;
+  font-family: Arial;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  resize: none;
+  padding: 10;
+  border: 1px solid rgba(0,0,0,0);
+  border-radius: 10px;
+  &:focus {
+    border: 1px solid gray;
+  }
+  transition: 0.25s;
 }
