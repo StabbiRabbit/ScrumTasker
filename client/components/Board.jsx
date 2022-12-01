@@ -143,7 +143,7 @@ function Board() {
             }}
             className="add-card-button"
           >
-            Add New
+            New Story
           </button>
         </div>
 
