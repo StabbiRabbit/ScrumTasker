@@ -5,7 +5,7 @@ import "../styles/Board.scss";
 const { BACKEND_URL } = process.env;
 
 function Board() {
-  const { id } = useParams();
+  const board_id = useParams().id;
   const [board, setBoard] = useState([]);
   const [stories, setStories] = useState([]);
   const [tasksToDo, setTasksToDo] = useState([]);
@@ -18,7 +18,7 @@ function Board() {
   }, []);
 
   const getBoardDataAndMapToState = async () => {
-    let serverResponse = await fetch(`${BACKEND_URL}/api/board/${id}`, {
+    let serverResponse = await fetch(`${BACKEND_URL}/api/board/${board_id}`, {
       method: "GET",
       credentials: "include",
     });
@@ -47,15 +47,15 @@ function Board() {
     }
   };
 
-  const addStoryToBoard = (text, completed) => {
-    // setStories((oldArray) => [...oldArray, { title: "new title" }]);
-    const board_id = fetch(`${BACKEND_URL}/api/story`, {
+  const addStoryToBoard = (storyWithoutId) => {
+    console.log("ADDING");
+    fetch(`${BACKEND_URL}/api/story`, {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ board_id: id, text, completed }),
+      body: JSON.stringify(storyWithoutId),
     })
       .then((serverResponse) => {
         console.log(serverResponse);
@@ -66,6 +66,30 @@ function Board() {
         const createdStory = serverResponseJson;
         setStories([...stories, createdStory]);
       });
+  };
+
+  const updateStoryText = (updatedStory) => {
+    // updatedStory is an object containing the updated story properties
+    fetch(`${BACKEND_URL}/api/story`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedStory),
+    }).then((serverResponse) => {
+      // The client should expect to receive status code, only, from the server
+      // Based on the status code from the server, update the piece of state and re-render
+      if (serverResponse.status >= 200 && serverResponse.status <= 299) {
+        const newStories = [...stories];
+        for (let i = 0; i < newStories.length; i++) {
+          if (newStories[i].story_id === updatedStory.story_id) {
+            newStories[i] = updatedStory;
+          }
+        }
+        setStories(newStories);
+      }
+    });
   };
 
   const addTaskToStory = (description, status, priority, story_id) => {
@@ -124,11 +148,11 @@ function Board() {
           {stories.map((story) => (
             <div className="cards">
               <form>
-                <textarea 
-                className="textarea"
-                value={story.text}
-                onChange={(event) => {
-                  const newStories = [...stories];
+                <textarea
+                  className="textarea"
+                  value={story.text}
+                  onChange={(event) => {
+                    const newStories = [...stories];
                     for (let i = 0; i < newStories.length; i++) {
                       let newStory = Object.assign({}, newStories[i]);
                       if (newStory.story_id === story.story_id) {
@@ -136,9 +160,18 @@ function Board() {
                       }
                       newStories[i] = newStory;
                     }
-                    setStories([...newStories]);
-                    event.target.style.height = event.target.scrollHeight + 'px';
-                }}></textarea>
+                    setStories(newStories);
+                    event.target.style.height =
+                      event.target.scrollHeight + "px";
+                  }}
+                  onBlur={(event) => {
+                    updateStoryText(story);
+                  }}
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    updateStoryText(story);
+                  }}
+                ></textarea>
               </form>
               <p>{story.description}</p>
               <button className="card-button">Delete</button>
@@ -154,7 +187,11 @@ function Board() {
           ))}
           <button
             onClick={() => {
-              addStoryToBoard(`New Story ${stories.length + 1}`, false);
+              addStoryToBoard({
+                board_id,
+                text: `New Story ${stories.length + 1}`,
+                completed: false,
+              });
             }}
             className="add-card-button"
           >

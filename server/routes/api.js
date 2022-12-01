@@ -108,6 +108,16 @@ router.post(
   }
 );
 
+router.patch(
+  "/story",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.updateStory,
+  (req, res) => {
+    return res.sendStatus(200);
+  }
+);
+
 router.post(
   "/task",
   cookieController.validateSSID,
