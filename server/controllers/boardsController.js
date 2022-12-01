@@ -118,9 +118,7 @@ boardsController.createBoard = async (req, res, next) => {
 
 boardsController.createStory = async (req, res, next) => {
   try {
-    console.log(req.body);
     const { text, completed, board_id } = req.body;
-    console.log(text, completed, board_id);
     let queryText =
       "INSERT INTO story (text, completed) VALUES ($1, $2) RETURNING _id;";
     let params = [text, completed];

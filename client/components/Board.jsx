@@ -48,7 +48,6 @@ function Board() {
   };
 
   const addStoryToBoard = (storyWithoutId) => {
-    console.log("ADDING");
     fetch(`${BACKEND_URL}/api/story`, {
       method: "POST",
       credentials: "include",
@@ -58,14 +57,35 @@ function Board() {
       body: JSON.stringify(storyWithoutId),
     })
       .then((serverResponse) => {
-        console.log(serverResponse);
         return serverResponse.json();
       })
       .then((serverResponseJson) => {
-        console.log(serverResponseJson);
         const createdStory = serverResponseJson;
         setStories([...stories, createdStory]);
       });
+  };
+
+  const deleteStoryById = (storyId) => {
+    fetch(`${BACKEND_URL}/api/story`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(storyId),
+    })
+      .then((serverResponse) => {
+        if (serverResponse.status >= 200 && serverResponse.status <= 299) {
+          const newStories = [...stories]
+          for (let i = 0; i < newStories.length; i++) {
+            if (newStories[i] === storyId) {
+              newStories.splice(i, 1);
+              break;
+            }
+          }
+          setStories(newStories);
+        }
+      })
   };
 
   const updateStoryText = (updatedStory) => {
@@ -173,8 +193,10 @@ function Board() {
                   }}
                 ></textarea>
               </form>
-              <p>{story.description}</p>
-              <button className="card-button">Delete</button>
+              <button className="card-button"
+              onClick={() => {
+                deleteStoryById(story)
+              }}>Delete</button>
               <button
                 className="card-button"
                 // onClick={() =>
