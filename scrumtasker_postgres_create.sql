@@ -25,10 +25,10 @@ CREATE TABLE public.sessions (
   "user_id" integer NOT NULL
 );
 
-CREATE TABLE public.board (
-	"_id" serial NOT NULL,
-	"title" varchar NOT NULL
-);
+-- CREATE TABLE public.board (
+-- 	"_id" serial NOT NULL,
+-- 	"title" varchar NOT NULL
+-- );
 
 CREATE TABLE  public.board_to_user (
 	"_id" serial NOT NULL,
