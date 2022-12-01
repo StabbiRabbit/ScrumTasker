@@ -152,6 +152,15 @@ router.delete(
   }
 );
 
+router.patch(
+  "/moveboard",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.moveBoard,
+  (req, res) => {
+    return res.status(200).json(res.locals.boards)
+  }
+)
 //stretch feature
 // app.get("/teams", (req, res) => {
 //   return res.status(200).sendFile(path.join(__dirname, "../build/bundle.html"));

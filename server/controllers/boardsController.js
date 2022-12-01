@@ -283,4 +283,12 @@ boardsController.updateBoardTitle = async (req, res, next) => {
   }
 }
 
+
+boardsController.moveBoard = async (req, res, next) => {
+  const { boards } = req.body;
+  res.locals.boards = boards;
+  console.log(boards, "BOARDS");
+  return next();
+}
+
 module.exports = boardsController;
