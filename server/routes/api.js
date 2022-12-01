@@ -77,6 +77,16 @@ router.delete(
   }
 );
 
+router.patch(
+  "/board",
+  cookieController.validateSSID,
+  cookieController.blockInvalidSession,
+  boardsController.updateBoardTitle,
+  (req, res) => {
+    return res.sendStatus(200)
+  }
+)
+
 router.get(
   "/board/:id",
   cookieController.validateSSID,
@@ -89,19 +99,19 @@ router.get(
 
 router.post(
   "/story",
-  cookieController.validateSSID,
-  cookieController.blockInvalidSession,
+  // cookieController.validateSSID,
+  // cookieController.blockInvalidSession,
   boardsController.createStory,
-  boardsController.getBoardFromUserUsingCache,
+  // boardsController.getBoardFromUserUsingCache,
   (req, res) => {
-    return res.status(200).json(res.locals.boardInfo);
+    return res.status(200).json(res.locals.createdStory);
   }
 );
 
 router.post(
   "/task",
-  cookieController.validateSSID,
-  cookieController.blockInvalidSession,
+  // cookieController.validateSSID,
+  // cookieController.blockInvalidSession,
   boardsController.createTask,
   boardsController.getBoardFromUserUsingCache,
   (req, res) => {

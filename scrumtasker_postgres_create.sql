@@ -36,17 +36,17 @@ CREATE TABLE  public.board_to_user (
   "user_id" integer NOT NULL
 );
 
-CREATE TABLE  public.story (
-	"_id" serial NOT NULL,
-  "text" varchar NOT NULL,
-  "completed" boolean NOT NULL
-);
+-- CREATE TABLE  public.story (
+-- 	"_id" serial NOT NULL,
+--   "text" varchar NOT NULL,
+--   "completed" boolean NOT NULL
+-- );
 
-CREATE TABLE  public.story_to_board (
-	"_id" serial NOT NULL,
-  "story_id" integer NOT NULL,
-  "board_id" integer NOT NULL
-);
+-- CREATE TABLE  public.story_to_board (
+-- 	"_id" serial NOT NULL,
+--   "story_id" integer NOT NULL,
+--   "board_id" integer NOT NULL
+-- );
 
 -- CREATE TABLE  public.task (
 -- 	"_id" serial NOT NULL,

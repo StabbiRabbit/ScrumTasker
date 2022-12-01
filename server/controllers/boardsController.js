@@ -1,5 +1,7 @@
 const db = require("../db.js");
-const Task = require("../task.js");
+const { Stories, Tasks } = require("../models/models.js");
+
+
 
 const boardsController = {};
 
@@ -132,20 +134,33 @@ boardsController.createBoard = async (req, res, next) => {
 
 boardsController.createStory = async (req, res, next) => {
   try {
+    // const { text, completed, board_id } = req.body;
+    // let queryText =
+    //   "INSERT INTO story (text, completed) VALUES ($1, $2) RETURNING _id;";
+    // let params = [text, completed];
+    // let dbResponse = await db.query(queryText, params);
+    // res.locals.story_id = dbResponse.rows[0]._id;
+    // res.locals.board_id = board_id;
+    // queryText =
+    //   "INSERT INTO story_to_board (story_id, board_id) VALUES ($1, $2);";
+    // params = [dbResponse.rows[0]._id, board_id];
+    // dbResponse = await db.query(queryText, params);
+    res.locals.createdStory = {
+      story_id: res.locals.story_id,
+      text,
+      completed,
+    }
     const { text, completed, board_id } = req.body;
-    let queryText =
-      "INSERT INTO story (text, completed) VALUES ($1, $2) RETURNING _id;";
-    let params = [text, completed];
-    let dbResponse = await db.query(queryText, params);
-    res.locals.story_id = dbResponse.rows[0]._id;
-    res.locals.board_id = board_id;
+    const story = await Stories.create(
+      {
+        text,
+        completed,
+        board_id: 2
 
-    queryText =
-      "INSERT INTO story_to_board (story_id, board_id) VALUES ($1, $2);";
-    params = [dbResponse.rows[0]._id, board_id];
-    dbResponse = await db.query(queryText, params);
-
-    return next();
+      }
+    );
+    res.sendStatus(200);
+    // return next();
   } catch (error) {
     return next({
       log: "Error creating a story",
@@ -159,40 +174,45 @@ boardsController.createTask = async (req, res, next) => {
   try {
     // console.log(req.body.story_id);
     // const { description, status, priority, story_id } = req.body;
-    let queryText =
-      "INSERT INTO task (description, status, priority) VALUES ($1, $2, $3) RETURNING _id;";
-    let params = [description, status, priority];
-    let dbResponse = await db.query(queryText, params);
-    // console.log("i was here");
-    res.locals.task_id = dbResponse.rows[0]._id;
+    // let queryText =
+    //   "INSERT INTO task (description, status, priority) VALUES ($1, $2, $3) RETURNING _id;";
+    // let params = [description, status, priority];
+    // let dbResponse = await db.query(queryText, params);
+    // // console.log("i was here");
+    // res.locals.task_id = dbResponse.rows[0]._id;
 
-    queryText =
-      "INSERT INTO task_to_story (task_id, story_id) VALUES ($1, $2);";
-    params = [dbResponse.rows[0]._id, story_id];
-    dbResponse = await db.query(queryText, params);
-    // console.log("i was here2");
+    // queryText =
+    //   "INSERT INTO task_to_story (task_id, story_id) VALUES ($1, $2);";
+    // params = [dbResponse.rows[0]._id, story_id];
+    // dbResponse = await db.query(queryText, params);
+    // // console.log("i was here2");
 
-    queryText = "SELECT board_id FROM story_to_board WHERE story_id = $1";
-    params = [story_id];
-    dbResponse = await db.query(queryText, params);
-    // console.log("i was here3");
-    console.log(dbResponse.rows);
-    res.locals.board_id = dbResponse.rows[0].board_id;
-    // console.log("i was here4");
+    // queryText = "SELECT board_id FROM story_to_board WHERE story_id = $1";
+    // params = [story_id];
+    // dbResponse = await db.query(queryText, params);
+    // // console.log("i was here3");
+    // console.log(dbResponse.rows);
+    // res.locals.board_id = dbResponse.rows[0].board_id;
+    // // console.log("i was here4");
 
-    const { description, status, priority, story_id } = req.body;
+    // const { description, status, priority, story_id } = req.body;
+
+    const { description, status, priority } = req.body
     // Sequelized Queries and Creation
-    const task = new Task.create(
+    const task = await Tasks.create(
       {
         description: description,
         status: status,
         priority: priority,
-        story_id: story_id
+        story_id: 7
       }
-    )
+    );
 
-    return next();
+    // console.log(task);
+    res.sendStatus(200);
+    // return next();
   } catch (error) {
+    console.log(error);
     return next({
       log: "Error creating a task",
       status: 500,
@@ -277,4 +297,21 @@ boardsController.deleteTask = async (req, res, next) => {
     });
   }
 };
+
+boardsController.updateBoardTitle = async (req, res, next) => {
+  try {
+    const { board_id, title } = req.body;
+    let queryText = "UPDATE board SET title = $1 WHERE _id = $2";
+    let params = [title, board_id];
+    let dbResponse = await db.query(queryText, params);
+    return next();
+  } catch (error) {
+    return next({
+      log: "boardController.updateBoardTitle",
+      status: 500,
+      message: { err: `Could not update the board title\nQUERY: ${queryText}` },
+    });
+  }
+};
+
 module.exports = boardsController;

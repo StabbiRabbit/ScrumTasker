@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import "../styles/Login.scss";
 
-const { BACKEND_URL } = process.env;;
+const { BACKEND_URL } = process.env;
 
 function Login() {
   // state control of username and password
