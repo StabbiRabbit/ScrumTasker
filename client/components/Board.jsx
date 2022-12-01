@@ -185,7 +185,7 @@ function Board() {
                   setStories(newStories);
                   event.target.style.height = event.target.scrollHeight + "px";
                 }}
-                onBlur={(event) => {
+                onBlur={() => {
                   updateStory(story);
                 }}
               ></textarea>
@@ -236,13 +236,8 @@ function Board() {
                 className="updateable-title"
                 onChange={(event) => {
                   const newTasksToDo = [...tasksToDo];
-                  for (let i = 0; i < newTasksToDo.length; i++) {
-                    let newTaskToDo = Object.assign({}, tasksToDo[i]);
-                    if (newTaskToDo.task_id === taskToDo.task_id) {
-                      newTaskToDo.description = event.target.value;
-                    }
-                    newTasksToDo[i] = newTaskToDo;
-                  }
+                  newTasksToDo[tasksToDo.indexOf(taskToDo)].description =
+                    event.target.value;
                   setTasksToDo(newTasksToDo);
                   event.target.style.height = event.target.scrollHeight + "px";
                 }}
